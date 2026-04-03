@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Socios - GestMusica{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+             gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px;
+                 padding: 1.5rem; text-align: center; }
+    .stat-card .number { font-size: 2rem; font-weight: 600; color: #1a1a2e; }
+    .stat-card .label { font-size: 0.85rem; color: #666; margin-top: 0.25rem; }
+    .stat-card.warning .number { color: #856404; }
+    .stat-card.danger .number { color: #721c24; }
+    .nav-socios { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2 style="margin-bottom: 1.5rem; font-size: 1.3rem; font-weight: 600;">Módulo de Socios</h2>
+
+<div class="stats">
+    <div class="stat-card">
+        <div class="number">{{ total_activos }}</div>
+        <div class="label">Socios activos</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">{{ total_bajas }}</div>
+        <div class="label">Bajas</div>
+    </div>
+    <div class="stat-card {% if recibos_pendientes > 0 %}warning{% endif %}">
+        <div class="number">{{ recibos_pendientes }}</div>
+        <div class="label">Recibos pendientes</div>
+    </div>
+    <div class="stat-card {% if recibos_vencidos > 0 %}danger{% endif %}">
+        <div class="number">{{ recibos_vencidos }}</div>
+        <div class="label">Recibos vencidos</div>
+    </div>
+</div>
+
+<div class="nav-socios">
+    <a href="{{ url_for('socios.lista') }}" class="btn btn-primary">Ver socios</a>
+    <a href="{{ url_for('socios.cuotas') }}" class="btn btn-secondary">Cuotas</a>
+    <a href="{{ url_for('socios.recibos') }}" class="btn btn-secondary">Recibos</a>
+    <a href="{{ url_for('socios.tipos_socio') }}" class="btn btn-secondary">Tipos de Socio</a>
+    <a href="{{ url_for('socios.config') }}" class="btn btn-secondary">Configuración</a>
+</div>
+{% endblock %}
