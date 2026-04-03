@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Tipos de Socio - GestMusica{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Tipos de socio</h2>
+    <a href="{{ url_for('socios.tipo_socio_nuevo') }}" class="btn btn-porimary">+ Nuevo tipo</a>
+</div>
+{% if tipos %}
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Importe</th>
+            <th>Periodicidad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in tipos %}
+        <tr>
+            <td>{{ t.nombre }}</td>
+            <td>{{ '%.2f'|format(t.importe_cuota) }} €</td>
+            <td>{{ t.periodicidad|capitalize }}</td>
+            <td>
+                <span class="badge {% if t.activo %}badge-success{% else %}badge-secondary{% endif %}">
+                    {{ 'Activo' if t.activo else 'Inactivo' }}
+                </span>
+            </td>
+            <td>
+                <a href="{{ url_for('socios.tipo_socio_editar', tipo_id=t.id) }}"
+                   class="btn btn-secondary btn-sm">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="color: #666;">No hay tipos de socio definidos todavía.</p>
+{% endif %}
+{% endblock %}

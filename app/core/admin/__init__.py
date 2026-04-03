@@ -1,0 +1,1 @@
+from app.core.admin.routes import admin_bp

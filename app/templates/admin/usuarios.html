@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Usuarios - GestMusica{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Usuarios</h2>
+    <a href="{{ url_for('admin.usuario_nuevo') }}" class="btn btn-sm btn-primary">+ Nuevo usuario</a>
+</div>
+
+{% if usuarios %}
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Estado</th>
+            <th>Último acceso</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in usuarios %}
+        <tr>
+            <td>{{ u.nombre }} {% if u.apellidos %}{{ u.apellidos }}{% endif %}</td>
+            <td>{{ u.email }}</td>
+            <td>
+                <span class="badge {% if u.activo %}badge-success{% else %}badge-danger{% endif %}">
+                    {{ 'Activo' if u.activo else 'Inactivo' }}
+                </span>
+            </td>
+            <td>{{ u.last_login.strftime('%d/%m/%Y %H:%M') if u.last_login else '-' }}</td>
+            <td>
+                <div class="actions">
+                    <a href="{{ url_for('admin.usuario_editar', member_id=u.id) }}"
+                       clasS="btn btn-secondary btn-sm">Editar</a>
+                    <a href="{{ url_for('admin.usuario_roles', member_id=u.id) }}"
+                       clasS="btn btn-secondary btn-sm">Roles</a>
+                    {% if u.id != g.user.id %}
+                    <form method="POST"
+                          action="{{ url_for('admin.usuario_desactivar', member_id=u.id|string) }}"
+                          style="display:inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-sm
+                            {% if u.activo %}btn-danger{% else %}btn-primary{% endif %}">
+                            {{ 'Desactivar' if u.activo else 'Activar' }}
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="color: #666;">No hay usuarios en esta agrupación todavía.</p>
+{% endif %}
+{% endblock %}

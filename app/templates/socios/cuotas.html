@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Cuotas - GestMusica{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Cuotas</h2>
+    <a href="{{ url_for('socios.cuota_nueva') }}" class="btn btn-primary">+ Nueva cuota</a>
+</div>
+{% if cuotas %}
+<table>
+    <thead>
+        <tr>
+            <th>Descripción</th>
+            <th>Tipo de socio</th>
+            <th>Importe</th>
+            <th>Periodo</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in cuotas %}
+        <tr>
+            <td>{{ c.descripcion }}</td>
+            <td>{{ c.tipo_socio.nombre }}</td>
+            <td>{{ '%.2f'|format(c.importe) }}</td>
+            <td>{{ c.fecha_inicio.strftime('%d/%m/%Y') }} - {{ c.fecha_fin.strftime('%d/%m/%Y') }}</td>
+            <td>
+                <span class="badge {% if c.activa %}badge-success{% else %}badge-secondary{% endif %}">
+                    {{ 'Activa' if c.activa else 'Inactiva' }}
+                </span>
+            </td>
+            <td>
+                <a href="{{ url_for('socios.cuota_editar', cuota_id=c.id) }}"
+                   class="btn btn-secondary btn-sm">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="color: #666;">No hay cuotas definidas todavía</p>
+{% endif %}
+{% endblock %}

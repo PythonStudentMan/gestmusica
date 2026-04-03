@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Roles - GestMusica{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Roles</h2>
+    <a href="{{ url_for('admin.rol_nuevo') }}" class="btn btn-sm btn-primary">+ Nuevo rol</a>
+</div>
+
+{% if roles %}
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Permisos</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for rol in roles %}
+        <tr>
+            <td>
+                {{ rol.nombre }}
+                {% if rol.es_sistema %}
+                <span class="badge badge-sistema">sistema</span>
+                {% endif %}
+            </td>
+            <td>
+                {% for permiso in (rol.permisos_json or []) %}
+                <span class="badge">{{ permiso }}</span>
+                {% endfor %}
+            </td>
+            <td>
+                <div class="actions">
+                    {% if not rol.es_sistema %}
+                    <a href="{{ url_for('admin.rol_editar', role_id=rol.id) }}"
+                       class="btn btn-secondary btn-sm">Editar</a>
+                    <form method="POSt"
+                          action="{{ url_for('admin.rol_eliminar', role_id=rol.id) }}"
+                          style="display:inline"
+                          onsubmit="return confirm('¿Eliminar el rol {{ rol.nombre }}?')">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                    {% else %}
+                    <span style="color: #999; font-size: 0.85rem;">No editable</span>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="color: #666;">No hay roles en esta agrupación todavía.</p>
+{% endif %}
+{% endblock %}

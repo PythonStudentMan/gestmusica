@@ -1,0 +1,1 @@
+from app.modules.socios.routes import socios_bp

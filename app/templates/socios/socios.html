@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Lista de socios - GestMusica{% endblock %}
+
+{% block extra_css %}
+<style>
+    .badge-activo { background: #d4edda; color: #155724; }
+    .badge-baja { background: #f8d7da; color: #721c24; }
+    .badge-suspendido { background: #fff3cd; color: #856404; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Socios</h2>
+    <a href="{{ url_for('socios.socio_nuevo') }}" class="btn btn-primary">+ Nuevo socio</a>
+</div>
+
+<div class="filtros">
+    <a href="{{ url_for('socios.lista', estado='activo') }}"
+       class="btn btn-sm {% if estado == 'activo' %}btn-active{% else %}btn-secondary{% endif %}">
+        Activos
+    </a>
+    <a href="{{ url_for('socios.lista', estado='baja') }}"
+       class="btn btn-sm {% if estado == 'baja' %}btn-active{% else %}btn-secondary{% endif %}">
+        Bajas
+    </a>
+    <a href="{{ url_for('socios.lista', estado='todos') }}"
+       class="btn btn-sm {% if estado == 'todos' %}btn-active{% else %}btn-secondary{% endif %}">
+        Todos
+    </a>
+</div>
+
+{% if socios %}
+<table>
+    <thead>
+        <tr>
+            <th>Nº Socio</th>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Fecha alta</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in socios %}
+        <tr>
+            <td>{{ s.numero_socio }}</td>
+            <td>{{ s.nombre_completo }}</td>
+            <td>{{ s.tipo_socio.nombre }}</td>
+            <td>{{ s.fecha_alta.strftime('%d/%m/%Y') }}</td>
+            <td>
+                <span class="badge badge-{{ s.estado }}">
+                    {{ s.estado|capitalize }}
+                </span>
+            </td>
+            <td>
+                <div class="actions">
+                    <a href="{{ url_for('socios.socio_detalle', socio_id=s.id) }}"
+                       class="btn btn-secondary btn-sm">Ver</a>
+                    <a href="{{ url_for('socios.socio_editar', socio_id=s.id) }}"
+                       class="btn btn-secondary btn-sm">Editar</a>
+                    {% if s.estado == 'activo' %}
+                    <a href="{{ url_for('socios.socio_baja', socio_id=s.id) }}"
+                       class="btn btn-sm" style="background:#f8d7da;color:#721c24;">Baja</a>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="color: #666;">No hay socios en este estado.</p>
+{% endif %}
+{% endblock %}

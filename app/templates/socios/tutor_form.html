@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Añadir tutor legal - GestMusica{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h2>Añadir tutor legal</h2>
+    <p class="subtitulo">Menor: {{ socio.nombre_completo }}</p>
+    <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.persona_tutor_id.label }} {{ form.persona_tutor_id() }}
+        </div>
+        <div class="form-group">
+            {{ form.relacion.label }} {{ form.relacion() }}
+        </div>
+        <div class="form-group checkbox">
+            {{ form.patria_potestad() }} {{ form.patria_potestad.label }}
+        </div>
+        <div class="form-group checkbox">
+            {{ form.firma_requerida() }} {{ form.firma_requerida.label }}
+        </div>
+        <div class="form-actions">
+            {{ form.submit(class='btn btn-primary') }}
+            <a href="{{ url_for('socios.socio_detalle', socio_id=socio.id) }}"
+               class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

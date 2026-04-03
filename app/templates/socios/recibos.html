@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Recibos - GestMusica{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Recibos</h2>
+</div>
+<div class="filtros">
+    <a href="{{ url_for('socios.recibos', estado='pendiente') }}"
+       class="btn btn-sm {% if estado == 'pendiente' %}btn-active{% else %}btn-secondary{% endif %}">
+        Pendientes
+    </a>
+    <a href="{{ url_for('socios.recibos', estado='vencido') }}"
+       class="btn btn-sm {% if estado == 'vencido' %}btn-active{% else %}btn-secondary{% endif %}">
+        Vencidos
+    </a>
+    <a href="{{ url_for('socios.recibos', estado='pagado') }}"
+       class="btn btn-sm {% if estado == 'pagado' %}btn-active{% else %}btn-secondary{% endif %}">
+        Pagados
+    </a>
+    <a href="{{ url_for('socios.recibos', estado='todos') }}"
+       class="btn btn-sm {% if estado == 'todos' %}btn-active{% else %}btn-secondary{% endif %}">
+        Todos
+    </a>
+</div>
+{% if recibos %}
+<table>
+    <thead>
+        <tr>
+            <th>Número</th>
+            <th>Socio</th>
+            <th>Cuota</th>
+            <th>Importe</th>
+            <th>Vencimiento</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in recibos %}
+        <tr>
+            <td>{{ r.numero_recibo }}</td>
+            <td>{{ r.socio.nombre_completo }}</td>
+            <td>{{ r.cuota.descripcion }}</td>
+            <td>{{ '%.2f'|format(r.importe_final) }} €</td>
+            <td>{{ r.fecha_vencimiento.strftime('%d/%m/%Y') }}</td>
+            <td>
+                <span class="badge badge-{{ r.estado }}">{{ r.estado|capitalize }}</span>
+            </td>
+            <td>
+                <div class="actions">
+                    {% if r.estado in ['pendiente', 'vencido'] %}
+                    <a href="{{ url_for('socios.recibo_pagar', recibo_id=r.id) }}"
+                       class="btn btn-primary btn-sm">Pagar</a>
+                    <form method="POST"
+                          action="{{ url_for('socios.recibo_anular', recibo_id=r.id) }}"
+                          style="display:inline"
+                          onsubmit="return confirm('¿Anular este recibo?')">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-sm btn-secondary">Anular</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="color: #666;">No hay recibos en ese estado.</p>
+{% endif %}
+{% endblock %}

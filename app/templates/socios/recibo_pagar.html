@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Registrar cobro - GestMusica{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h2>Registrar cobro</h2>
+    <div class="info-recibo">
+        <div class="fila"><span>Recibo</span><span>{{ recibo.numero_recibo }}</span></div>
+        <div class="fila"><span>Socio</span><span>{{ recibo.socio.nombre_completo }}</span></div>
+        <div class="fila"><span>Cuota</span><span>{{ recibo.cuota.descripcion }}</span></div>
+        <div class="fila"><span>Importe</span><span>{{ '%.2f'|format(recibo.importe) }}</span></div>
+    </div>
+    <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="form-grid">
+            <div class="form-group">
+                {{ form.fecha_pago.label }} {{ form.fecha_pago() }}
+            </div>
+            <div class="form-group">
+                {{ form.metodo_pago.label }} {{ form.metodo_pago() }}
+            </div>
+            <div class="form-group">
+                {{ form.descuento.label }} {{ form.descuento() }}
+            </div>
+            <div class="form-group">
+                {{ form.motivo_descuento.label }} {{ form.morivo_descuento() }}
+            </div>
+        </div>
+        <div class="form-group">
+            {{ form.notas.label }} {{ form-notas(rows=2) }}
+        </div>
+        <div class="form-actions">
+            {{ form.submit(class='btn btn-primary') }}
+            <a href="{{ url_for('socios.recibos') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

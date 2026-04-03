@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Configuración socios - GestMusica{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h2>Configuración del módulo de socios</h2>
+    <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="seccion">General</div>
+        <div class="form-group checkbox">
+            {{ form.musicos_pueden_ser_socios() }}
+            {{ form.musicos_pueden_ser_socios.label }}
+        </div>
+        <div class="form-group checkbox">
+            {{ form.un_socio_por_unidad_familiar() }}
+            {{ form.un_socio_por_unidad_familiar.label }}
+        </div>
+        <div class="form-group">
+            {{ form.max_tutores_menor.label }} {{ form.max_tutores_menor() }}
+        </div>
+
+        <div class="seccion">Descuentos escuela musical</div>
+        <div class="form-group checkbox">
+            {{ form.descuento_unidad_familiar() }}
+            {{ form.descuento_unidad_familiar.label }}
+        </div>
+        <div class="form-group">
+            {{ form.tipo_descuento_escuela.label }} {{ form.tipo_descuento_escuela() }}
+        </div>
+        <div class="form-group">
+            {{ form.valor_descuento_escuela.label }} {{ form.valor_descuento_escuela() }}
+        </div>
+
+        <div class="form-actions">
+            {{ form.submit(class='btn btn-primary') }}
+            <a href="{{ url_for('socios.index') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

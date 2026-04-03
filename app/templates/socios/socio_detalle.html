@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% block title %}{{ socio.nombre_completo }} - GestMusica{% endblock %}
+
+{% block extra_css %}
+<style>
+    .detalle-grid { display: grid; grid-template-columns: 1fr 1gr; gap: 1.5rem; }
+    .card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 1.5rem; }
+    .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem;
+               padding-bottom: 0.5rem; border-bottom: 1px solid #f0f0f0; }
+    .campo { margin-bottom: 0.75rem; font-size: 0.9rem; }
+    .campo .etiqueta { color: #666; font-size: 0.8rem; margin-bottom: 0.1rem; }
+    .campo .valor { font-weight: 500; }
+    .badge-suspendido { background: #fff3cd; color: #856404; }
+    .badge-pendiente { background: #fff3cd; color: #856404; }
+    .badge-pagado { background: #d4edda; color: #155724; }
+    .badge-vencido { background: #f8d7da; color: #721c24; }
+    .badge-anulado { background: #e0e0e0; color: #555; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="acciones">
+    <a href="{{ url_for('socios.lista') }}" class="btn btn-secondary">+ Volver</a>
+    <a href="{{ url_for('socios.socio_editar', socio_id=socio.id) }}"
+       class="btn btn-primary">Editar</a>
+    {% if socio.persona.es_menor %}
+    <a href="{{ url_for('socios.tutor_nuevo', socio_id=socio.id) }}"
+       class="btn btn-secondary">+ Tutor legal</a>
+    {% endif %}
+    {% if socio.estado == 'activo' %}
+    <a href="{{ url_for('socios.socio_baja', socio_id=socio.id) }}"
+       class="btn btn-sm" style="background:#f8d7da;color:#721c24;">Dar de baja</a>
+    {% endif %}
+</div>
+
+<div class="detalle-grid">
+    <div class="card">
+        <h3>Datos personales</h3>
+        <div class="campo">
+            <div class="etiqueta">Nombre completo</div>
+            <div class="valor">{{ socio.persona.nombre_completo }}</div>
+        </div>
+        <div class="campo">
+            <div class="etiqueta">DNI/NIE</div>
+            <div class="valor">{{ socio.persona.dni or '-' }}</div>
+        </div>
+        <div class="campo">
+            <div class="etiqueta">Email</div>
+            <div class="valor">{{ socio.persona.email or '-' }}</div>
+        </div>
+        <div class="campo">
+            <div class="etiqueta">Teléfono</div>
+            <div class="valor">{{ socio.persona.telefono or '-' }}</div>
+        </div>
+        <div class="campo">
+            <div class="etiqueta">Fecha de nacimiento</div>
+            <div class="valor">
+                {{ socio.persona.fecha_nacimiento.strftime('%d/%m/%Y')
+                    if socio.persona.fecha_nacimiento else '-' }}
+                {% if socio.persona.es_menor %}
+                <span class="badge" style="background:#fff3cd;color:#856404;">Menor</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Datos de socio</h3>
+        <div class="campo">
+            <div class="etiqueta">Número de socio</div>
+            <div class="valor">{{ socio.numero_socio }}</div>
+        </div>
+        <div class="campo">
+            <div class="etiqueta">Tipo</div>
+            <div class="valor">{{ socio.tipo_socio.nombre }}</div>
+        </div>
+        <div class="campo">
+            <div class="etiqueta">Estado</div>
+            <div class="valor">
+                <span class="badge badge-{{ socio.estado }}">
+                    {{ socio.estado|capitalize }}
+                </span>
+            </div>
+        </div>
+        <div class="campo">
+            <div class="etiqueta">Fecha de alta</div>
+            <div class="valor">{{ socio.fecha_alta.strftime('%d/%m/%Y') }}</div>
+        </div>
+        {% if socio.fecha_baja %}
+        <div class="campo">
+            <div class="etiqueta">Fecha de baja</div>
+            <div class="valor">{{ socio.fecha_baja.strftime('%d/%m/%Y') }}</div>
+        </div>
+        {% endif %}
+        {% if socio.unidad_familiar %}
+        <div class="campo">
+            <div class="etiqueta">Unidad familiar</div>
+            <div class="valor">{{ socio.unidad_familiar.nombre }}
+                {% if socio.es_titular_familiar %}
+                <span class="badge" style="background:#e8eaf6;color:#3949ab;">Titular</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if tutores %}
+<div class="card" style="margin-top: 1.5rem;">
+    <h3>Tutores legales</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Relación</th>
+                <th>Patria potestad</th>
+                <th>Firma requerida</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in tutores %}
+            <tr>
+                <td>{{ t.tutor.nombre_completo }}</td>
+                <td>{{ t.relacion|capitalize }}</td>
+                <td>{{ 'Sí' if t.patria_potestad else 'No' }}</td>
+                <td>{{ 'Sí' if t.firma_requeerida else 'No' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<div class="card" style="margin-top: 1.5rem;">
+    <h3>Historial de recibos</h3>
+    {% if recibos %}
+    <table>
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Cuota</th>
+                <th>Importe</th>
+                <th>Vencimiento</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in recibos %}
+            <tr>
+                <td>{{ r.numero_recibo }}</td>
+                <td>{{ r.cuota.descripcion }}</td>
+                <td>{{ '%.2f'|format(r.importe_final) }} €</td>
+                <td>{{ r.fecha_vencimiento.strftime('%d/%m/%Y') }}</td>
+                <td>
+                    <span class="badge badge-{{ r.estado }}">
+                        {{ r.estado|capitalize }}
+                    </span>
+                </td>
+                <td>
+                    {% if r.estado in ['pendiente', 'vencido'] %}
+                    <a href="{{ url_for('socios.recibo_pagar', recibo_id=r.id) }}"
+                       class="btn btn-sm btn-primary">Pagar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #666; font-size: 0.9rem;">No hay recibos para este socio</p>
+    {% endif %}
+</div>
+{% endblock %}

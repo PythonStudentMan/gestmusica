@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Baja de socio - GestMusica{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h2>Dar da baja: {{ socio.nombre_completo }}</h2>
+    <div class="aviso">Esta acción dará de baja al socio. Los recibos pendientes NO se anularán automáticamente</div>
+    <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.fecha_baja.label }} {{ form.fecha_baja() }}
+        </div>
+        <div class="form-actions">
+            {{ form.submit(class='btn btn-danger') }}
+            <a href="{{ url_for('socios.socio_detalle', socio_id=socio.id) }}"
+               class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

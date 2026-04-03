@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar sesión - GestMusica{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-wrap {
+        min-height: calc(100vh - 2rem);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-card {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 2.5rem 2rem;
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .login-card h1 {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        color: #1a1a2e;
+    }
+
+    .login-card .subtitle {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.4rem;
+        color: #333;
+    }
+
+    .form-group input[type="text"]
+    .form-group input[type="email"]
+    .form-group input[type="password"] {
+        width: 100%;
+        padding: 0.6rem 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        transition: border-color 0.15s;
+        outline: none;
+    }
+
+    .form-group input:focus {
+        border-color: #1a1a2e;
+    }
+
+    .form-group.checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-group.checkbox label {
+        margin: 0;
+        font-weight: 400;
+        color: #555;
+    }
+
+    .field-error {
+        font-size: 0.8rem;
+        color: #c0392b;
+        margin-top: 0.25rem;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 0.7rem;
+        background: #1a1a2e;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: 0.5rem;
+        transition: background 0.15s;
+    }
+
+    .btn-primary:hover { background: #2d2d4e; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-wrap">
+    <div class="login-card">
+        <h1>GestMusica</h1>
+        <p class="subtitle">Accede a tu agrupación musical</p>
+
+        <form method="POST" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.slug.label }}
+                {{ form.slug() }}
+                {% for error in form.slug.errors %}
+                    <p class="field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.email.label }}
+                {{ form.email() }}
+                {% for error in form.email.errors %}
+                    <p class="field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.password.label }}
+                {{ form.password() }}
+                {% for error in form.password.errors %}
+                    <p class="field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="form-group checkbox">
+                {{ form.remember() }}
+                {{ form.remember.label }}
+            </div>
+
+            {{ form.submit(class='btn-primary') }}
+        </form>
+    </div>
+</div>
+{% endblock %}
