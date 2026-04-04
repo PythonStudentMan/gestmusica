@@ -3,23 +3,11 @@
 
 {% block extra_css %}
 <style>
-    .form-card { background: #fff; border: 1px solid #e0e0e0;
-                 border-radius: 10px; padding: 2rem; max-width: 480px; }
-    .form-card h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.25rem; }
-    .form-card .subtitle { font-size: 0.9rem; color: #666; margin-bottom: 1.5rem; }
     .rol-item { display: flex; align-items: center; gap: 0.75rem;
                 padding: 0.6rem 0; border-bottom: 1px solid #f0f0f0;
                 font-size: 0.9rem; }
     .rol-item:last-of-type { border-bottom: none; }
     .rol-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
-    .form-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
-    .btn { padding: 0.55rem 1.1rem; border-radius: 6px; font-size: 0.9rem;
-           font-weight: 500; cursor: pointer; text-decoration: none;
-           border: none; display: inline-block; }
-    .btn-primary { background: #1a1a2e; color: #fff; }
-    .btn-primary:hover { background: #2d2d4e; }
-    .btn-secondary { background: #e0e0e0; color: #333; }
-    .btn-secondary:hover { background: #ccc; }
 </style>
 {% endblock %}
 
@@ -41,7 +29,7 @@
             </div>
             {% endfor %}
         {% else %}
-            <p style="color: #666;">No hay roles disponibles. Crea roles primiero.</p>
+            <p style="color: var(--color-text-muted);">No hay roles disponibles. Crea roles primiero.</p>
         {% endif %}
 
         <div class="form-actions">

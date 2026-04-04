@@ -32,9 +32,9 @@
             <td>
                 <div class="actions">
                     <a href="{{ url_for('admin.usuario_editar', member_id=u.id) }}"
-                       clasS="btn btn-secondary btn-sm">Editar</a>
+                       class="btn btn-secondary btn-sm">Editar</a>
                     <a href="{{ url_for('admin.usuario_roles', member_id=u.id) }}"
-                       clasS="btn btn-secondary btn-sm">Roles</a>
+                       class="btn btn-secondary btn-sm">Roles</a>
                     {% if u.id != g.user.id %}
                     <form method="POST"
                           action="{{ url_for('admin.usuario_desactivar', member_id=u.id|string) }}"
@@ -53,6 +53,6 @@
     </tbody>
 </table>
 {% else %}
-<p style="color: #666;">No hay usuarios en esta agrupación todavía.</p>
+<p style="color: var(--colortext-muted);">No hay usuarios en esta agrupación todavía.</p>
 {% endif %}
 {% endblock %}

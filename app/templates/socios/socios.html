@@ -1,14 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Lista de socios - GestMusica{% endblock %}
 
-{% block extra_css %}
-<style>
-    .badge-activo { background: #d4edda; color: #155724; }
-    .badge-baja { background: #f8d7da; color: #721c24; }
-    .badge-suspendido { background: #fff3cd; color: #856404; }
-</style>
-{% endblock %}
-
 {% block content %}
 <div class="page-header">
     <h2>Socios</h2>
@@ -62,7 +54,7 @@
                        class="btn btn-secondary btn-sm">Editar</a>
                     {% if s.estado == 'activo' %}
                     <a href="{{ url_for('socios.socio_baja', socio_id=s.id) }}"
-                       class="btn btn-sm" style="background:#f8d7da;color:#721c24;">Baja</a>
+                       class="btn btn-sm btn-danger">Baja</a>
                     {% endif %}
                 </div>
             </td>
@@ -71,6 +63,6 @@
     </tbody>
 </table>
 {% else %}
-<p style="color: #666;">No hay socios en este estado.</p>
+<p style="color: var(--color-text-muted);">No hay socios en este estado.</p>
 {% endif %}
 {% endblock %}

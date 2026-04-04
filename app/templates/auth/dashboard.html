@@ -4,7 +4,7 @@
 
 {% block content %}
 <h2>Bienvenido, {{ g.user.nombre }}</h2>
-<p style="color: #666; margin-top: 0.5rem;">
+<p style="color: var(--color-text-muted); margin-top: 0.5rem;">
     Agrupación: <strong>{{ session.get('tenant_nombre') }}</strong>
 </p>
 {% endblock %}

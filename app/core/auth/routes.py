@@ -62,17 +62,10 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        slug = form.slug.data.strip().lower()
         email = form.email.data.strip().lower()
         password = form.password.data
 
-        # 1. Buscamos el tenant por slug
-        tenant = Tenant.query.filter_by(slug=slug, activo=True).first()
-        if not tenant:
-            flash('Agrupación no encontrada o inactiva.', 'danger')
-            return render_template('auth/login.html', form=form)
-
-        # 2. Buscamos el usuario dentro del tenant
+        # Buscamos el usuario dentro del tenant
         identity = Identity.query.filter_by(
             email=email,
             activo=True
@@ -82,15 +75,19 @@ def login():
             flash('Email o contraseña incorrectos.', 'danger')
             return render_template('auth/login.html', form=form)
 
-        # 3. Comprobar que la identidad pertenece a este tenant
+        # Comprobar que la identidad pertenece a este tenant
         member = TenantMember.query.filter_by(
             identity_id=identity.id,
-            tenant_id=tenant.id,
             activo=True,
-        ).first()
-        if not member:
-            flash('No tienes acceso a esta agrupación.', 'danger')
+        ).count()
+        if member < 1:
+            flash('No tienes acceso a esta plataforma.', 'danger')
             return render_template('auth/login.html', form=form)
+
+        # Si tiene más de una membresía, debe elegir con qué agrupación quiere abrir sesión
+        if member > 1:
+            # elegir agrupación
+
 
         # 4. Registramos sessión en BD
         token = str(uuid.uuid4())

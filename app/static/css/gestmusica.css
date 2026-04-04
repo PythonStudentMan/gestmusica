@@ -1,121 +1,407 @@
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ================================================================
+   gestmusica.css - Hoja de estilos general
+   GestMusica - Plataforma de Gestión para Agrupaciones Musicales
+   ================================================================ */
 
-body {
-    font-family: system-ui, -apple-system, sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
-    background: #f5f5f5;
-    color: #1a1a1a;
-    min-height: 100vh;
+/* -------------------------
+   Variables y reset
+   ------------------------- */
+:root {
+    --color-primary:         #1a1a2e:
+    --color-primary-hover:   #2d2d4e;
+    --color-secondary:       #e0e0e0;
+    --color-secondary-hover: #cccccc;
+    --color-danger:          #c0392b;
+    --color-danger-bg:       #f8d7da;
+    --color-danger-text:     #721c24;
+    --color-success-bg:      #d4edda;
+    --color-success-text:    #155724;
+    --color-warning-bg:      #fff3cd;
+    --color-warning-text:    #856404;
+    --color-info-bg:         #d1ecf1;
+    --color-info-text:       #0c5460;
+    --color-border:          #e0e0e0;
+    --color-border-input:    #cccccc;
+    --color-text:            #333333;
+    --color-text-muted:      #666666;
+    --color-text-hint:       #888888;
+    --color_bg:              #f5f5f5;
+    --color-surface:         #ffffff;
+
+    --radius-sm:  4px;
+    --radius:     6px;
+    --radius-lg: 10px;
+
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+/* -----------------
+   Layout principal
+   ----------------- */
+container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+/* --------------
+   Navegación
+   -------------- */
+
 nav {
-    background: #1a1a2e;
-    color: #fff;
-    padding: 0 2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 56px;
+    background: var(--color-primary);
+    color: #fff;
+    padding: 0 1.5rem;
+    height: 52px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-nav .brand {
-    font-size: 1.1rem;
-    font-weight: 600;
+nav a {
     color: #fff;
     text-decoration: none;
+    font-size: 0.9rem;
+}
+
+nav a.brand {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacent: 0.01rem;
 }
 
 nav .nav-right {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    font-size: 0.9rem;
+    gap: 1.25rem;
 }
 
-nav a { color: #ccc; text-decoration: none; }
-nav a:hover { color: #fff: }
-
-.container {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
+nav .nav-right span {
+    font-size: 0.875rem;
+    opacity: 0.75;
 }
+
+nav a:hover:not(.brand) {
+    opacity: 0.8;
+}
+
+/* -----------------------------
+   Alertas / Mensajes Flash
+   ----------------------------- */
 
 .alert {
     padding: 0.75rem 1rem;
-    border-radius: 6px;
+    border-radius: var(--radius);
     margin-bottom: 1rem;
     font-size: 0.9rem;
 }
 
-.alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-.alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-.alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-.alert-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+.alert-success { background: var(--color-success-bg); color: var(--color-success-text); }
+.alert-danger,
+.alert-error { background: var(--color-danger-bg); color: var(--color-danger-text); }
+.alert-warning { background: var(--color-warning-bg); color: var(--color-warning-text); }
+.alert-info { background: var(--color-info-bg); color: var(--color-info-text); }
 
-.page-header { display: flex; align-items: center;
-                   justify-content: space-between; margin-bottom: 1.5rem; }
-.page-header h2 { font-size: 1.3rem; font-weight: 600; }
+/* ------------------------
+   Cabecera de página
+   ------------------------ */
 
-.btn { padding: 1.5rem 1.5rem; border-radius: 6px; font-size: 0.9rem;
-       font-weight: 500; cursor: pointer; text-decoration: none;
-       border: none; display: inline-block; }
-.btn-primary { background: #1a1a2e; color: #fff; }
-.btn-primary:hover { background: #2d2d4e; }
-.btn-secondary { background: #e0e0e0; color: #333; }
-.btn-secondary:hover { background: #ccc; }
-.btn-danger { background: #c0392b; color: #fff; }
-.btn-danger:hover { background: #a93226; }
-.btn-sm { padding: 0.3rem 0.7rem; font-size: 0.8rem; }
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
 
-table { width: 100%; border-collapse: collapse; background: #fff;
-        border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
-th { background: #f5f5f5; padding: 0.75 rem 1rem; text-align: left;
-     font-size: 0.85rem; font-weight: 600; color: #555;
-     border-bottom: 1 px solid #e0e0e0; }
-td { padding: 0.75rem 1rem; border-bottom: 1px solid #f0f0f0;
-     font-size: 0.9rem; vertical-align: middle; }
-tr:last-child td { border-bottom: none; }
+.page-header h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
 
-.badge { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem;
-         background: #e8eaf6; color: #3949ab; margin: 0.15rem;
-         display: inline-block;}
-.badge-sistema { background: #fff3e0; color: #e65100; }
+/* ------------------
+   Botones
+   ------------------ */
 
-.actions { display: flex; gap: 0.5rem; }
+.btn {
+    display: inline-block;
+    padding: 0.55rem 1.1rem;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    transition: background 0.15s, opacity 0.15s;
+    line-height: 1.4;
+}
 
-.form-card { background: #fff; border: 1px solid #e0e0e0;
-             border-radius: 10px; padding: 2rem; max-width: 560px; }
+.btn-sm {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.825rem;
+}
 
-.form-card h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 1.5rem; }
-.form-card .subtitle { font-size: 0.9rem; color: #666; margin-bottom: 1.5rem; }
-.form-group { margin-bottom: 1.25rem; }
-.form-group label { display: block; font-size: 0.875rem; font-weight: 500;
-                    margin-bottom: 0.4rem; color: #333; }
+.btn-primary {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.btn-primary:hover { background: var(--color-primary-hover); }
+
+.btn-secondary {
+    background: var(--color-secondary);
+    color: var(--color-text};
+}
+
+.btn-secondary:hover { background: var(--color-secondary-hover); }
+
+.btn-danger {
+    background: var(--color-danger-bg);
+    color: var(--color-danger-text);
+}
+.btn-danger:hover { opacity: 0.85; }
+
+.btn-active {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+/* --------------------------------------
+   Formularios - grupos y etiquetas
+   -------------------------------------- */
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: var(--color-text);
+}
+
 .form-group input[type="text"],
 .form-group input[type="email"],
-.form-group input[type="password"] {
-    width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #ccc;
-    border-radius: 6px; font-size: 0.95rem; outline: none;
+.form-group input[type="password"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group select,
+.form-group text-area {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--color-border-input);
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    font-family: var(--font);
+    outline: none;
+    background: var(--color-surface);
+    color: var(--color-text);
+    transition: border-color 0.15s;
 }
-.form-group input:focus { border-color: #1a1a2e; }
-.form-group .hint { font-size: 0.8rem; color: #888; margin-top: 0.25rem; }
-.form-group.checkbox { display: flex; align-items: center; gap: 0.5rem; }
-.form-group.checkbox label { margin: 0; font-weight: 400; }
 
-.field-error { font-size: 0.8rem; color: #c0392b; margin-top: 0.25rem; }
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--color-primary);
+}
 
-.permisos-grid { display: grid; grid-template-columns: 1fr 1fr;
-                 gap: 0.5rem; margin-top: 0.5rem; }
-.permiso-item { display: flex; align-items: center; gap: 0.5rem;
-                font-size: 0.875rem; color: #333; }
-.permiso-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer }
+.form-group.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 
-.form-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+.form-group.checkbox label {
+    margin: 0;
+    font-weight: 400;
+    color: #555;
+}
 
-.rol-item { display: flex; align-items: center; gap: 0.75rem;
-            padding: 0.6rem 0; border-bottom: 1px solid #f0f0f0;
-            font-size: 0.9rem; }
-.rol-item:last-of-type { border-bottom: none; }
-.rol-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+.form-group .hint {
+    font-size: 0.8rem;
+    color: var(--color-text-hint);
+    margin-top: 0.25rem;
+}
+
+.field-error {
+    font-size: 0.8rem;
+    color: var(--color-danger);
+    margin-top: 0.25rem;
+}
+
+/* --------------------------------
+   Tarjeta de formulario
+   -------------------------------- */
+.form-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    max-width: 520px;
+}
+
+.form-card h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--color-primary);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1.25rem;
+}
+
+.form-grid .form-group {
+    /* ocupa 1 columna por defecto */
+}
+
+.form-grid .form-group.full {
+    grid-column: 1 / -1;
+}
+
+.seccion {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-hint);
+    margin: 1.5rem 0 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--color-border);
+    grid-column: 1 / -1;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+/* --------------------
+   Tablas
+   ------------------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    font-size: 0.9rem;
+}
+
+thead th {
+    background: #f9f9f9;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppdercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--color-border);
+}
+
+tbody td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover {
+    background: #fafafa;
+}
+
+.actions {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+/* ----------------------------
+   Badges / Etiquetas de estado
+   ---------------------------- */
+.badge {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.775rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-success { background: var(--color-success-bg); color: var(--color-success-text); }
+.badge-danger { background: var(--color-danger-bg); color: var(--color-danger-text); }
+.badge-warning { background: var(--color-warning-bg); color: var(--color-warning-text); }
+
+/* Alias semánticos para el módulo SOCIOS */
+
+.badge-activo { background: var(--color-success-bg); color: var(--color-success-text); }
+.badge-baja { background: var(--color-danger-bg); color: var(--color-danger-text); }
+.badge-suspendido { background: var(--color-warning-bg); color: var(--color-warning-text); }
+
+/* -------------------------
+   Filtros de listado
+   -------------------------*/
+.filtros {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+/* ---------------------
+   Responsive básico
+   --------------------- */
+@media (max-width: 640px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-card {
+        max-width: 100%;
+    }
+
+    nav .nav-right {
+        gap: 0.75rem;
+    }
+
+    table {
+        font-size: 0.825rem;
+    }
+
+    thead th,
+    tbody td {
+        padding: 0.6rem 0.5rem;
+    }
+}
+

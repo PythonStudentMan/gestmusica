@@ -3,15 +3,38 @@
 
 {% block extra_css %}
 <style>
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-             gap: 1rem; margin-bottom: 2rem; }
-    .stat-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px;
-                 padding: 1.5rem; text-align: center; }
-    .stat-card .number { font-size: 2rem; font-weight: 600; color: #1a1a2e; }
-    .stat-card .label { font-size: 0.85rem; color: #666; margin-top: 0.25rem; }
-    .stat-card.warning .number { color: #856404; }
-    .stat-card.danger .number { color: #721c24; }
-    .nav-socios { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .stats {
+        display: grid;
+        grid-template-columns:
+        repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: #fff;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        text-align: center;
+    }
+    .stat-card .number {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--color-primary);
+    }
+    .stat-card .label {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        margin-top: 0.25rem;
+    }
+    .stat-card.warning .number { color: var(--color-warning-text); }
+    .stat-card.danger .number { color: var(--color-darger-text); }
+    .nav-socios {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
 </style>
 {% endblock %}
 
