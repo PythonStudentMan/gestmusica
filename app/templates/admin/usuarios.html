@@ -35,6 +35,8 @@
                        class="btn btn-secondary btn-sm">Editar</a>
                     <a href="{{ url_for('admin.usuario_roles', member_id=u.id) }}"
                        class="btn btn-secondary btn-sm">Roles</a>
+                     <a href="{{ url_for('admin.usuario_permisos', member_id=u.id) }}"
+                       class="btn btn-secondary btn-sm">Permisos</a>
                     {% if u.id != g.user.id %}
                     <form method="POST"
                           action="{{ url_for('admin.usuario_desactivar', member_id=u.id|string) }}"

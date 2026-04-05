@@ -1,5 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SelectMultipleField, SubmitField
+from wtforms import (
+    StringField, PasswordField, BooleanField,
+    SelectMultipleField, SelectField, SubmitField,
+)
 from wtforms.validators import DataRequired, Email, Length, Optional
 from wtforms.widgets import ListWidget, CheckboxInput
 
@@ -56,3 +59,16 @@ class RolForm(FlaskForm):
         option_widget=CheckboxInput(),
     )
     submit = SubmitField('Guardar')
+
+class MemberPermisoForm(FlaskForm):
+    permiso = SelectField(
+        'Permiso',
+        choices=PERMISOS_DISPONIBLES,
+        validators=[DataRequired()],
+    )
+    motivo = StringField(
+        'Motivo',
+        validators=[DataRequired(), Length(max=255)],
+        description='Explica brevemente por qué se asigna este permiso extraordinario.',
+    )
+    submit = SubmitField('Añadir permiso')

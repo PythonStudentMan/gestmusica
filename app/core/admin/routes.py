@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, g, abort
 from app import db
-from app.core.admin.forms import UsuarioForm, RolForm
-from app.models.user import Identity, TenantMember, Role, MemberRole
+from app.core.admin.forms import UsuarioForm, RolForm, MemberPermisoForm
+from app.models.user import Identity, TenantMember, Role, MemberRole, MemberPermiso
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -116,8 +116,7 @@ def usuario_editar(member_id):
         flash(f'Usuario {identity.nombre} actualizado correctamente.', 'success')
         return redirect(url_for('admin.usuarios'))
 
-    return render_template('admin/usuario_form.html', form=form,
-                           titulo='Editar usuario', user=member)
+    return render_template('admin/usuario_form.html', form=form, titulo='Editar usuario')
 
 
 @admin_bp.route('/usuarios/<uuid:member_id>/desactivar/', methods=['POST'])
@@ -167,6 +166,65 @@ def usuario_roles(member_id):
                            user=member,
                            roles_tenant=roles_tenant,
                            roles_usuario=roles_usuario)
+
+# ---- Permisos individuales -----------------------------------------------------------
+@admin_bp.route('/usuarios/<uuid:member_id>/permisos/', methods=['GET', 'POST'])
+@admin_required
+def usuario_permisos(member_id):
+    """
+    Gestiona los permisos individuales (MemberPermiso) de un miembro.
+    Estos permisos son aditivos: amplían lo que dan sus roles sin modificarlos.
+    Útil para accesos temporales o excepcionales.
+    """
+    member = TenantMember.query.filter_by(
+        id=member_id, tenant_id=g.tenant_id
+    ).first_or_404()
+
+    form = MemberPermisoForm()
+
+    if form.validate_on_submit():
+        # Evitar duplicados
+        existente = MemberPermiso.query.filter_by(
+            member_id=member.id,
+            permiso=form.permiso.data,
+        ).first()
+        if existente:
+            flash('Este permiso ya está asignado a este usuario', 'warning')
+        else:
+            mp = MemberPermiso(
+                member_id=member.id,
+                permiso=form.permiso.data,
+                motivo=form.motivo.data.strip(),
+            )
+            db.session.add(mp)
+            db.session.commit()
+            flash(f'Permiso "{form.permiso.data}" añadido correctamente.', 'success')
+        return redirect(url_for('admin.usuario_permisos', member_id=member_id))
+
+    permisos_individuales = MemberPermiso.query.filter_by(
+        member_id=member.id
+    ).order_by(MemberPermiso.created_at).all()
+
+    return render_template('admin/usuario_permisos.html', user=member,
+                           form=form, permisos_individuales=permisos_individuales)
+
+
+@admin_bp.route('/usuarios/<uuid:member_id>/permisos/<uuid:permiso_id>/revocar/', methods=['POST'])
+@admin_required
+def usuario_permiso_revocar(member_id, permiso_id):
+    member = TenantMember.query.filter_by(
+        id=member_id, tenant_id=g.tenant_id
+    ).first_or_404()
+    mp = MemberPermiso.query.filter_by(
+        id=permiso_id, member_id=member.id
+    ).first_or_404()
+
+    permiso_nombre = mp.permiso
+    db.session.delete(mp)
+    db.session.commit()
+    flash(f'Permiso "{permiso_nombre} revocado correctamente.', 'success')
+    return redirect(url_for('admin.usuario_permisos', member_id=member_id))
+
 
 # ---- Roles ------------------------------------------------------------------------------
 

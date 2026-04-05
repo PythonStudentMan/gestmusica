@@ -1,23 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}{{ socio.nombre_completo }} - GestMusica{% endblock %}
 
-{% block extra_css %}
-<style>
-    .detalle-grid { display: grid; grid-template-columns: 1fr 1gr; gap: 1.5rem; }
-    .card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 1.5rem; }
-    .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem;
-               padding-bottom: 0.5rem; border-bottom: 1px solid #f0f0f0; }
-    .campo { margin-bottom: 0.75rem; font-size: 0.9rem; }
-    .campo .etiqueta { color: #666; font-size: 0.8rem; margin-bottom: 0.1rem; }
-    .campo .valor { font-weight: 500; }
-    .badge-suspendido { background: #fff3cd; color: #856404; }
-    .badge-pendiente { background: #fff3cd; color: #856404; }
-    .badge-pagado { background: #d4edda; color: #155724; }
-    .badge-vencido { background: #f8d7da; color: #721c24; }
-    .badge-anulado { background: #e0e0e0; color: #555; }
-</style>
-{% endblock %}
-
 {% block content %}
 <div class="acciones">
     <a href="{{ url_for('socios.lista') }}" class="btn btn-secondary">+ Volver</a>
@@ -29,7 +12,7 @@
     {% endif %}
     {% if socio.estado == 'activo' %}
     <a href="{{ url_for('socios.socio_baja', socio_id=socio.id) }}"
-       class="btn btn-sm" style="background:#f8d7da;color:#721c24;">Dar de baja</a>
+       class="btn btn-danger btn-sm">Dar de baja</a>
     {% endif %}
 </div>
 
@@ -58,7 +41,7 @@
                 {{ socio.persona.fecha_nacimiento.strftime('%d/%m/%Y')
                     if socio.persona.fecha_nacimiento else '-' }}
                 {% if socio.persona.es_menor %}
-                <span class="badge" style="background:#fff3cd;color:#856404;">Menor</span>
+                <span class="badge badge-menor">Menor</span>
                 {% endif %}
             </div>
         </div>
@@ -97,7 +80,7 @@
             <div class="etiqueta">Unidad familiar</div>
             <div class="valor">{{ socio.unidad_familiar.nombre }}
                 {% if socio.es_titular_familiar %}
-                <span class="badge" style="background:#e8eaf6;color:#3949ab;">Titular</span>
+                <span class="badge badge-titular">Titular</span>
                 {% endif %}
             </div>
         </div>

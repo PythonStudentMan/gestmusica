@@ -7,7 +7,7 @@
    Variables y reset
    ------------------------- */
 :root {
-    --color-primary:         #1a1a2e:
+    --color-primary:         #1a1a2e;
     --color-primary-hover:   #2d2d4e;
     --color-secondary:       #e0e0e0;
     --color-secondary-hover: #cccccc;
@@ -20,6 +20,10 @@
     --color-warning-text:    #856404;
     --color-info-bg:         #d1ecf1;
     --color-info-text:       #0c5460;
+    --color-neutral-bg:      #e0e0e0;
+    --color-neutral-text:    #555555;
+    --color-accent-bg:       #e8eaf6;
+    --color-accent-text:     #3949ab;
     --color-border:          #e0e0e0;
     --color-border-input:    #cccccc;
     --color-text:            #333333;
@@ -272,10 +276,6 @@ nav a:hover:not(.brand) {
     gap: 0 1.25rem;
 }
 
-.form-grid .form-group {
-    /* ocupa 1 columna por defecto */
-}
-
 .form-grid .form-group.full {
     grid-column: 1 / -1;
 }
@@ -296,6 +296,14 @@ nav a:hover:not(.brand) {
     display: flex;
     gap: 0.75rem;
     margin-top: 1.5rem;
+}
+
+.subtitle,
+.subtitulo {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+    margin-top: -0.75rem;
 }
 
 /* --------------------
@@ -355,15 +363,27 @@ tbody tr:hover {
     white-space: nowrap;
 }
 
+/* Genéricos */
 .badge-success { background: var(--color-success-bg); color: var(--color-success-text); }
 .badge-danger { background: var(--color-danger-bg); color: var(--color-danger-text); }
 .badge-warning { background: var(--color-warning-bg); color: var(--color-warning-text); }
+.badge-secondary { background: var(--color-neutral-bg); color: var(--color-neutral-text); }
+.badge-accent { background: var(--color-accent-bg); color: var(--color-accent-text); }
+.badge-sistema { background: var(--color-accent-bg); color: var(--color-accent-text); }
 
 /* Alias semánticos para el módulo SOCIOS */
 
 .badge-activo { background: var(--color-success-bg); color: var(--color-success-text); }
 .badge-baja { background: var(--color-danger-bg); color: var(--color-danger-text); }
 .badge-suspendido { background: var(--color-warning-bg); color: var(--color-warning-text); }
+.badge-menor { background: var(--color-warning-bg); color: var(--color-warning-text); }
+.badge-titular { background: var(--color-accent-bg); color: var(--color-accent-text); }
+
+/* Estados de recibo */
+.badge-pendiente { background: var(--color-warning-bg); color: var(--color-warning-text); }
+.badge-pagado { background: var(--color-success-bg); color: var(--color-success-text); }
+.badge-vencido { background: var(--color-danger-bg); color: var(--color-danger-text); }
+.badge-anulado { background: var(--color-neutral-bg); color: var(--color-neutral-text); }
 
 /* -------------------------
    Filtros de listado
@@ -375,33 +395,202 @@ tbody tr:hover {
     flex-wrap: wrap;
 }
 
+/* --------------------------------------------------
+   Tarjeta genérica (usada en detalle de socio, etc.)
+   -------------------------------------------------- */
+.card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+}
+
+.card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #f0f0f0;
+    color: var(--color-primary);
+}
+
+/* Campo etiqueta/valor dentro de .card */
+.campo {
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.campo .etiqueta {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.1rem;
+}
+
+.campo .valor {
+    font-weight: 500;
+}
+
+/* ---------------------------------
+   Avisos informativos
+   --------------------------------- */
+.aviso {
+    background: var(--color-info-bg);
+    color: var(--color-info-text);
+    border-radius: var(--radius);
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ------------------------------------
+   Info de recibo (filas clave/valor)
+   ------------------------------------ */
+.info-recibo {
+    background: #f9f9f9;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.fila {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.35rem 0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.fila:last-child {
+    border-bottom: none;
+}
+
+.fila span:first-child {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+}
+
+.fila span:last-child {
+    font-weight: 500;
+}
+
+/* ---------------------------------------------------
+   Acciones de página (cabecera con botones agrupados)
+   --------------------------------------------------- */
+.acciones {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+/* -----------------------------------
+   Grid de detalle (2 columnas)
+   ----------------------------------- */
+.detalle-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+/* -------------------------------------------
+   Stats (dashboard módulo socios)
+   ------------------------------------------- */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.stat-card .number {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.stat-card .label {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-top: 0.25rem;
+}
+
+.stat-card.warning .number { color: var(--color-warning-text); }
+.stat-card.danger .number { color: var(--color-danger-text); }
+
+/* -------------------------------
+   Navegación interna de módulo
+   ------------------------------- */
+.nav-socios {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+/* ---------------------------------
+   Permisos - grid de checkboxes
+   --------------------------------- */
+.permisos-grid {
+    display: grid;
+    grid-template-colums: 1fr 1fr;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.permiso-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-text);
+}
+
+.permiso-item imput[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* ----------------------------------------
+   Lista de roles (asignación a usuario)
+   ---------------------------------------- */
+.rol-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+}
+
+.rol-item:last-of-type { border-bottom: none; }
+
+.rol-item input[type="checkbox"} {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
 /* ---------------------
    Responsive básico
    --------------------- */
 @media (max-width: 640px) {
-    .container {
-        padding: 1rem;
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .form-card {
-        max-width: 100%;
-    }
-
-    nav .nav-right {
-        gap: 0.75rem;
-    }
-
-    table {
-        font-size: 0.825rem;
-    }
-
-    thead th,
-    tbody td {
-        padding: 0.6rem 0.5rem;
-    }
+    .container { padding: 1rem; }
+    .form-grid { grid-template-columns: 1fr; }
+    .detalle-grid { grid-template-columns: 1fr; }
+    .form-card { max-width: 100%; }
+    .permisos-grid { grid-template-columns: 1fr; }
+    nav .nav-right { gap: 0.75rem; }
+    table { font-size: 0.825rem; }
+    thead th, tbody td { padding: 0.6rem 0.5rem; }
 }
 

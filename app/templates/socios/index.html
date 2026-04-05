@@ -1,45 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}Socios - GestMusica{% endblock %}
 
-{% block extra_css %}
-<style>
-    .stats {
-        display: grid;
-        grid-template-columns:
-        repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    .stat-card {
-        background: #fff;
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
-        padding: 1.5rem;
-        text-align: center;
-    }
-    .stat-card .number {
-        font-size: 2rem;
-        font-weight: 600;
-        color: var(--color-primary);
-    }
-    .stat-card .label {
-        font-size: 0.85rem;
-        color: var(--color-text-muted);
-        margin-top: 0.25rem;
-    }
-    .stat-card.warning .number { color: var(--color-warning-text); }
-    .stat-card.danger .number { color: var(--color-darger-text); }
-    .nav-socios {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        margin-bottom: 1.5rem;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<h2 style="margin-bottom: 1.5rem; font-size: 1.3rem; font-weight: 600;">Módulo de Socios</h2>
+<h2 style="margin-bottom: 1.5rem; font-size: 1.3rem; font-weight: 600; color: var(--color-primary);">
+    Módulo de Socios
+</h2>
 
 <div class="stats">
     <div class="stat-card">

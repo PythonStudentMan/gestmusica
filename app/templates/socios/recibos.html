@@ -5,6 +5,7 @@
 <div class="page-header">
     <h2>Recibos</h2>
 </div>
+
 <div class="filtros">
     <a href="{{ url_for('socios.recibos', estado='pendiente') }}"
        class="btn btn-sm {% if estado == 'pendiente' %}btn-active{% else %}btn-secondary{% endif %}">
@@ -23,6 +24,7 @@
         Todos
     </a>
 </div>
+
 {% if recibos %}
 <table>
     <thead>
