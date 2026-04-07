@@ -1,7 +1,7 @@
 import pytest
 from app import create_app, db as _db
 from app.models.tenant import Tenant, Module, TenantModule
-from app.models.user import Identity, TenantMember, Role, MemberRole, MemberPermiso
+from app.models.user import Identity, TenantMember, Role, MemberRole, MemberPermiso, Invitacion
 
 
 @pytest.fixture(scope='session')
@@ -21,6 +21,7 @@ def db(app):
         # Limpiar tablas en orden correcto (respetando FK)
         _db.session.execute(_db.text(
             'TRUNCATE TABLE '
+            'invitaciones, '
             'recibos, cuotas, socios, tipos_socio, tutores_legales, '
             'unidades_familiares, socios_config, personas, '
             'member_roles, member_permisos, sessions, '

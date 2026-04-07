@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Invitaciones- GestMusica{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Invitaciones</h2>
+    <a href="{{ url_for('admin.invitacion_nueva') }}" class="btn btn-primary btn-sm">
+        + Nueva invitación
+    </a>
+</div>
+
+{% if invitaciones %}
+<table>
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Nombre</th>
+            <th>Estado</th>
+            <th>Enviada</th>
+            <th>Caduca</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for inv in invitaciones %}
+        <tr>
+            <td>{{ inf.email }}</td>
+            <td>{{ inv.nombre or '' }}</td>
+            <td>
+                {% if inv.estado == 'pendiente' and inv.ha_caducado %}
+                    <span class="badge badge-secondary">Caducada</span>
+                {% elif inv.estado == 'pendiente' %}
+                    <span class="badge badge-warning">Pendiente</span>
+                {% elif inv.estado == 'aceptada' %}
+                    <span class="badge badge-success">Aceptada</span>
+                {% else %}
+                    <span class="badge badge-secondary">Cancelada</span>
+                {% endif %}
+            </td>
+            <td>{{ inv.created_at.strftime('%d/%m/Y %H:%M') }}</td>
+            <td>
+                <span {% if inv.ha_caducado %}style="color:var(--color-danger)"{% endif %}>
+                    {{ inv.expires_at.strftime('%d/%m/%Y %H:$M') }}
+                </span>
+            </td>
+            <td>
+                <div class="actions">
+                    {% if inv.es_valida %}
+                    <form method="POST"
+                          action="{{ url_for('admin.invitacion_reenviar', inv_id=inv.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-secondary btn-sm">Reenviar</button>
+                    </form>
+                    <form method="POST"
+                          action="{{ url_for('admin.invitacion_cancelar', inv_id=inv.id) }}"
+                          onsubmit="return confirm('¿Cancelar la invitación a {{ inv.email }}?')">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="color: var(--color-text-muted);">No se han enviado invitaciones todavía.</p>
+{% endif %}
+{% endblock %}

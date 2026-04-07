@@ -1,0 +1,12 @@
+Hola{% if invitacion.nombre %}, {{ invitacion.nombre }}{% endif %},
+
+{{ invitacion.invitador.nombre }} te ha invitado a unirte a {{ invitacion.tenant.nombre }} en GestMusica.
+
+Para activar tu cuenta y establecer tu contraseña, haz clic en el siguiente enlace:
+
+{{ enlace }}
+
+Este enlace es válido durante 72 horas. Si no esperabas esta invitación, puedes ignorar este mensaje.
+
+--
+GestMusica · Plataforma de Gestión para Agrupaciones Musicales

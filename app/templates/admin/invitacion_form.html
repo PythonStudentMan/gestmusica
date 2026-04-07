@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Nueva invitación - GestMusica{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h2>Invitar a un nuevo usuario</h2>
+    <p class="subtitle">
+        Se enviará un enlace de activación al email indicado.
+        El enlace caduca en 72 horas.
+    </p>
+
+    <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.email.label }}
+            {{ form.email(placeholder='usuario@ejemplo.com') }}
+            <p class="hint">{{ form.email.description }}</p>
+            {% for e in form.email.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.nombre.label }}
+            {{ form.nombre(placeholder='Nombre del invitado (opcional)') }}
+            <p class="hint">{{ form.nombre.description }}</p>
+            {% for e in form.nombre.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div class="form-actions">
+            {{ form.submit(class='btn btn-primary') }}
+            <a href="{{ url_for('admin.invitaciones') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

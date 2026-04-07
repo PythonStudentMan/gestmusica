@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, g, abort
 from app import db
-from app.core.admin.forms import UsuarioForm, RolForm, MemberPermisoForm
-from app.models.user import Identity, TenantMember, Role, MemberRole, MemberPermiso
+from app.core.admin.forms import UsuarioForm, RolForm, MemberPermisoForm, InvitacionForm
+from app.models.user import Identity, TenantMember, Role, MemberRole, MemberPermiso, Invitacion
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -306,3 +306,106 @@ def rol_eliminar(role_id):
     db.session.commit()
     flash(f'Rol {rol.nombre} eliminado correctamente.', 'success')
     return redirect(url_for('admin.roles'))
+
+# -------- Invitaciones -----------------------------------------------------------------
+@admin_bp.route('/invitaciones/', methods=['GET'])
+@admin_required
+def invitaciones():
+    """ Lista de invitaciones enviadas en esta agrupación """
+    invs = Invitacion.query.filter_by(
+        tenant_id=g.tenant_id
+    ).order_by(Invitacion_created_at.desc()).all()
+    return render_template('admin/invitaciones.html', invitaciones=invs)
+
+@admin_bp.route('/invitaciones/nueva/', methods=['GET', 'POST'])
+@admin_required
+def invitacion_nueva():
+    """ El admin genera una invitación y se envía por email """
+    form = InvitacionForm()
+
+    if form.validate_on_submit():
+        email = form.email.data.strip().lower()
+
+        # Comprobar que no hay ya un miembro activo con ese email en este tenant
+        identity = Identity.query.filter_by(email=email).first()
+        if identity:
+            ya_miembro = TenantMember.query.filter_by(
+                identity_id=identity.id,
+                tenant_id=g.tenant_id,
+                activo=True,
+            ).first()
+            if ya_miembro:
+                flash('Ya existe un usuario activo con ese email en esta agrupación', 'warning')
+                return render_template('admin/invitacion_form.html', form=form)
+
+        # Anular invitaciones pendientes previas para el mismo email en este tenant
+        Invitacion.query.filter_by(
+            tenant_id=g.tenant_id,
+            email=email,
+            estado='pendiente',
+        ).update({'estado': 'caducada'})
+
+        inv = Invitacion.crear(
+            tenant_id=g.tenant_id,
+            email=email,
+            nombre=form.nombre.data,
+            invitado_por_id=g.user.id,
+        )
+        db.session.add(inv)
+        db.session.flush()
+        db.session.refresh(inv)
+
+        # Enviar email
+        try:
+            from app.core.email import send_invitacion
+            send_invitacion(inv)
+            db.session.commit()
+            flash(f'Invitación enviada a {email}.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error al enviar el email: {e}', 'danger')
+            return render_template('admin/invitacion_form.html', form=form)
+
+        return redirect(url_for('admin/invitaciones'))
+
+    return render_template('admin/invitacion_form.html', form=form)
+
+
+@admin_bp.route('/invitaciones/<uuid:inv_id>/reenviar/', methods=['POST'])
+@admin_required
+def invitacion_reenviar(inv_id):
+    """ Reenvía el email de una invitación pendiente """
+    inv = Invitacion.query.filter_by(
+        id=inv_id, tenant_id=g.tenant_id
+    ).first_or_404()
+
+    if not inv.es_valida:
+        flash('Esta invitación ya no es válida (aceptada o caducada).', 'warning')
+        return redirect(url_for('admin.invitaciones'))
+
+    try:
+        from app.core.email import send_invitacion
+        send_invitacion(inv)
+        flash(f'Invitación reenviada a {inv.email}.', 'success')
+    except Exception as e:
+        flash(f'Error al reenviar el email: {e}', 'danger')
+
+    return redirect(url_for('admin.invitaciones'))
+
+
+@admin_bp.route('/invitaciones/<uuid:inv_id>/cancelar/', methods=['POST'])
+@admin_required
+def invitacion_cancelar(inv_id):
+    """ Cancela (caduca) una invitación pendiente """
+    inv = Invitacion.query.filter_by(
+        id=inv_id, tenant_id=g.tenant_id
+    ).first_or_404()
+
+    if inv.estado != 'pendiente':
+        flash('Solo se pueden cancelar invitaciones pendientes.', 'warning')
+        return redirect(url_for('admin.invitaciones'))
+
+    inv.estado = 'caducada'
+    db.session.commit()
+    flash(f'Invitación a {inv.email} cancelada.', 'success')
+    return redirect(url_for('admin.invitaciones'))

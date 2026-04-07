@@ -6,8 +6,8 @@ from flask import (
     session, flash, request, g
 )
 from app import db
-from app.core.auth.forms import LoginForm
-from app.models.user import Identity, TenantMember, Session as UserSession
+from app.core.auth.forms import LoginForm, AceptarInvitacionForm
+from app.models.user import Identity, TenantMember, Session as UserSession, Invitacion
 from app.middleware.tenant import set_tenant
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -177,3 +177,77 @@ def logout():
 @login_required
 def dashboard():
     return render_template('auth/dashboard.html')
+
+@auth_bp.route('/invitacion/<string:token>/', methods=['GET', 'POST'])
+def aceptar_invitacion(token):
+    """
+    Ruta pública a la que llega el usuario desde el email de invitación.
+    GET -> muestra el formulario para establecer nombre y contraseña
+    POST -> crea/recupera la Identity, crea el TenantMember y hace login
+    """
+    inv = Invitacion.query.filter_by(token=token).first_or_404()
+
+    if not inv.es_valida:
+        if inv.estado == 'aceptada':
+            flash('Esta invitación ya fue aceptada. Puede iniciar sesión directamente.', 'info')
+        else:
+            flash('Esta invitación ha caducado. Solicita una nueva al administrador.', 'warning')
+        return redirect(url_for('auth.login'))
+
+    form = AceptarInvitacionForm()
+
+    # Pre-rellenar nombre si viene en la invitación
+    if request.method == 'GET' and inv.nombre:
+        form.nombre.data = inv.nombre
+
+    if form.validate_on_submit():
+        # Buscaar o crear la Identity
+        identity = Identity.query.filter_by(email=inv.email).first()
+
+        if identity:
+            # La persona ya existe (quizá en otra agrupación):
+            # Actualizamos nombre si no lo tenía y establecemos la contraseña
+            if not identity.activo:
+                identity.activo = True
+            if form.nombre.data.strip():
+                identity.nombre = form.nombre.data.strip()
+            if form.apellidos.data and form.apellidos.data.strip():
+                identity.apellidos = form.apellidos.data.strip()
+            identity.set_password(form.password.data)
+        else:
+            identity = Identity(
+                email=inv.email,
+                nombre=form.nombre.data.strip(),
+                apellidos=form.apellidos.data.strip() if form.apellidos.data else None,
+                activo=True,
+            )
+            identity.set_password(form.password.data)
+            db.session.add(identity)
+            db.session.flush()
+
+        # Crear la membresía si no existe ya
+        member = TenantMember.query.filter_by(
+            identity_id=identity.id, tenant_id=inv.tenant_id,
+        ).first()
+        if not member:
+            member = TenantMember(
+                identity_id=identity.id,
+                tenant_id=inv.tenant_id,
+                activo=True,
+            )
+            db.session.add(member)
+            db.session.flush()
+        else:
+            member.activo = True
+
+        # Marcar invitación como aceptada
+        inv.marcar_aceptada(identity.id)
+
+        db.session.commit()
+
+        # Login automático
+        _crear_sesion_bd(identity, inv.tenant, remember=False)
+        flash(f'¡Bienvenido a {inv.tenant.nombre}! Tu cuenta ha sido activada.', 'success')
+        return redirect(url_for('auth.dashboard'))
+
+    return render_template('auth/aceptar_invitacion.html', form=form, invitacion=inv)

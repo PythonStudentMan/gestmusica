@@ -21,6 +21,7 @@
             {% endif %}
             {% if g.user.tiene_permiso('admin.usuarios') or g.user.tiene_permiso('admin.roles') %}
             <a href="{{ url_for('admin.usuarios') }}">Usuarios</a>
+            <a href="{{ url_for('admin.invitaciones') }}">Invitaciones</a>
             <a href="{{ url_for('admin.roles') }}">Roles</a>
             {% endif %}
             <span>{{ g.user.nombre }}</span>

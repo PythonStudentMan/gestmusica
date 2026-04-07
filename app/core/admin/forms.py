@@ -72,3 +72,17 @@ class MemberPermisoForm(FlaskForm):
         description='Explica brevemente por qué se asigna este permiso extraordinario.',
     )
     submit = SubmitField('Añadir permiso')
+
+class InvitacionForm(FlaskForm):
+    """ Formulario para que el admin invita a un nuevo usuario por email """
+    email = StringField(
+        'Email del invitado',
+        validators=[DataRequired(), Email(), Length(max=255)],
+        description='Se enviará un enlace de activación a esta dirección.',
+    )
+    nombre = StringField(
+        'Nombre (opcional)',
+        validators=[Optional(), Length(max=128)],
+        description='Nombre sugerido. El usuario podrá cambiarlo al activar su cuenta.',
+    )
+    submit = SubmitField('Enviar invitación')
