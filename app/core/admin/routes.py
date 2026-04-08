@@ -314,7 +314,7 @@ def invitaciones():
     """ Lista de invitaciones enviadas en esta agrupación """
     invs = Invitacion.query.filter_by(
         tenant_id=g.tenant_id
-    ).order_by(Invitacion_created_at.desc()).all()
+    ).order_by(Invitacion.created_at.desc()).all()
     return render_template('admin/invitaciones.html', invitaciones=invs)
 
 @admin_bp.route('/invitaciones/nueva/', methods=['GET', 'POST'])
@@ -343,7 +343,8 @@ def invitacion_nueva():
             tenant_id=g.tenant_id,
             email=email,
             estado='pendiente',
-        ).update({'estado': 'caducada'})
+        ).update({'estado': 'caducada'}, synchronize_session='fetch')
+        db.session.flush()
 
         inv = Invitacion.crear(
             tenant_id=g.tenant_id,
@@ -355,18 +356,17 @@ def invitacion_nueva():
         db.session.flush()
         db.session.refresh(inv)
 
+        db.session.commit()
+
         # Enviar email
         try:
             from app.core.email import send_invitacion
             send_invitacion(inv)
-            db.session.commit()
             flash(f'Invitación enviada a {email}.', 'success')
         except Exception as e:
-            db.session.rollback()
-            flash(f'Error al enviar el email: {e}', 'danger')
-            return render_template('admin/invitacion_form.html', form=form)
+            flash(f'Invitación creada pero error al enviar el email: {e}', 'warning')
 
-        return redirect(url_for('admin/invitaciones'))
+        return redirect(url_for('admin.invitaciones'))
 
     return render_template('admin/invitacion_form.html', form=form)
 
@@ -374,10 +374,19 @@ def invitacion_nueva():
 @admin_bp.route('/invitaciones/<uuid:inv_id>/reenviar/', methods=['POST'])
 @admin_required
 def invitacion_reenviar(inv_id):
+    print("\n" + "=" * 60)
+    print("DEBUG: Entrando a invitación_reenviar")
+    print(f"DEBUG: inv_id= {inv_id}")
+    print(f"DEBUG: g.tenant_id = {g.tenant_id}")
+    print(f"DEBUG: g.user = {g.user}")
+    print("=" * 60 + "\n")
+
     """ Reenvía el email de una invitación pendiente """
     inv = Invitacion.query.filter_by(
         id=inv_id, tenant_id=g.tenant_id
     ).first_or_404()
+
+    print(f"DEBUG: Invitación encontrada: {inv.id}, estado: {inv.estado}, es_valida={inv.es_valida}")
 
     if not inv.es_valida:
         flash('Esta invitación ya no es válida (aceptada o caducada).', 'warning')
@@ -390,6 +399,7 @@ def invitacion_reenviar(inv_id):
     except Exception as e:
         flash(f'Error al reenviar el email: {e}', 'danger')
 
+    print("DEBUG: Redirigiando a admin.invitaciones")
     return redirect(url_for('admin.invitaciones'))
 
 

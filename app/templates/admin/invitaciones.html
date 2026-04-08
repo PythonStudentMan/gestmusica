@@ -24,7 +24,7 @@
     <tbody>
         {% for inv in invitaciones %}
         <tr>
-            <td>{{ inf.email }}</td>
+            <td>{{ inv.email }}</td>
             <td>{{ inv.nombre or '' }}</td>
             <td>
                 {% if inv.estado == 'pendiente' and inv.ha_caducado %}

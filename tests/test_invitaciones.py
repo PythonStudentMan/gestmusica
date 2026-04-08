@@ -118,12 +118,12 @@ class TestInvitacionModelo:
             i1 = Invitacion(
                 tenant_id=tenant.id, email='a@test.com',
                 token=token, estado='pendiente',
-                invitado_por=m.id, expires_at=expires,
+                invitado_por_id=m.id, expires_at=expires,
             )
             i2 = Invitacion(
                 tenant_id=tenant.id, email='b@test.com',
                 token=token, estado='pendiente',
-                invitado_por=m.id, expires_at=expires,
+                invitado_por_id=m.id, expires_at=expires,
             )
             db.session.add_all([i1, i2])
             with pytest.raises(IntegrityError):
@@ -299,12 +299,13 @@ class TestAdminInvitaciones:
             inv_id = inv.id
 
         _login(client, identity)
-        csrf = _get_csrf(client, '/admin/invitaciones/')
+
         r = client.post(
             f'/admin/invitaciones/{inv_id}/reenviar/',
-            data={'csrf_token': csrf},
+            data={},
             follow_redirects=True,
         )
+
         assert r.status_code == 200
         assert 'reenviada' in r.get_data(as_text=True).lower()
 

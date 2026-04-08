@@ -1,0 +1,1 @@
+from app.core.root.routes import root_bp

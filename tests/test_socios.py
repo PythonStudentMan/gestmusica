@@ -40,7 +40,7 @@ def tenant_socios(db, app):
             nombre='Admin',
             permisos_json=[
                 'socios.ver', 'socios.crear', 'socios.editar', 'socios.eliminar',
-                'cuotas.crear', 'cutoas.editar',
+                'cuotas.crear', 'cuotas.editar',
                 'tesoreria.cobrar', 'tesoreria.recibos.eliminar',
                 'admin.usuarios', 'admin.roles',
             ],

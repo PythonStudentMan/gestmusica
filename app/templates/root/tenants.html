@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Agrupaciones - GestMusica{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Todas las agrupaciones</h2>
+    <a href="{{ url_for('root.tenant_nuevo') }}" class="btn btn-primary">+ Nueva agrupación</a>
+</div>
+
+{% if tenants %}
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Slug</th>
+            <th>Modo</th>
+            <th>Estado</th>
+            <th>Creada</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in tenants %}
+        <tr>
+            <td>{{ t.nombre }}</td>
+            <td>{{ t.slug }}</td>
+            <td>{{ t.modo }}</td>
+            <td>
+                <span class="badge {% if t.activo %}badge-success{% else %}badge-danger{% endif %}">
+                    {{ 'Activo' if t.activo else 'Inactivo' }}
+                </span>
+            </td>
+            <td>{{ t.created_at.strftime('%d/%m/%Y') }}</td>
+            <td>
+                <div class="actions">
+                    <a href="{{ url_for('root.tenant_entrar', tenant_id=t.id) }}"
+                       class="btn btn-sm btn-primary">Entrar</a>
+                    <a href="{{ url_for('root.tenant_editar', tenant_id=t.id) }}"
+                       class="btn btn-sm btn-secondary">Editar</a>
+                    <form method="POST"
+                          action="{{ url_for('root.tenant_toggle', tenant_id=t.id) }}"
+                          style="display:inline;"
+                          onsubmit="return confirm('¿Cambiar estado de {{ t.nombre }}?')">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-sm {% if t.activo %}btn-danger{% else %}btn-success{% endif %}">
+                            {{ 'Desactivar' if t.activo else 'Activar' }}
+                        </button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="color:var(--color-text-muted);">No hay agrupaciones registradas.</p>
+{% endif %}
+{% endblock %}

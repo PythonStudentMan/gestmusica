@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block title %}Panel Root - GestMusica{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+    .stat-card {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        text-align: center;
+    }
+    .stat-number {
+        font-size: 2.2rem;
+        font-weight: 600;
+        color: var(--color-primary);
+    }
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--color-text-muted);
+        margin-top: 0.25rem;
+    }
+    .quick-actions {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2 style="margin-botton: 1.5rem; font-size: 1.5rem; font-weight: 600; color: var(--color-primary);">
+    Panel de Superaministración
+</h2>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number">{{ total_tenants }}</div>
+        <div class="stat-label">Total agrupaciones</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ tenants_activos }}</div>
+        <div class="stat-label">Agrupaciones activas</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ total_usuarios }}</div>
+        <div class="stat-label">Usuarios totales</div>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <a href="{{ url_for('root.tenant_nuevo') }}" class="btn btn-primary">+ Nueva agrupación</a>
+    <a href="{{ url_for('root.tenants') }}" class="btn btn-secondary">Ver todas las agrupaciones</a>
+</div>
+
+<div class="card">
+    <h3>Agrupaciones recientes</h3>
+    {% if tenants %}
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Slug</th>
+                <th>Modo</th>
+                <th>Estado</th>
+                <th>Creada</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in tenants %}
+            <tr>
+                <td>{{ t.nombre }}</td>
+                <td>{{ t.slug }}</td>
+                <td>{{ t.modo }}</td>
+                <td>
+                    <span class="badge {% if t.activo %}badge-success{% else %}badge-danger{% endif %}">
+                        {{ 'Activo' if t.activo else 'Inactivo' }}
+                    </span>
+                </td>
+                <td>{{ t.created_at.strftime('%d/%m/%Y') }}</td>
+                <td>
+                    <div class="actions">
+                        <a href="{{ url_for('root.tenant_entrar', tenant_id=t.id) }}"
+                           class="btn btn-sm btn-primary">Entrar</a>
+                        <a href="{{ url_for('root.tenant_editar', tenant_id=t.id) }}"
+                           class="btn btn-sm btn-secondary">Editar</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: var(--color-text-muted);">No hay agrupaciones registradas.</p>
+    {% endif %}
+</div>
+{% endblock %}

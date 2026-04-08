@@ -36,16 +36,27 @@ def send_invitacion(invitacion):
         subject=f'Invitación a {invitacion.tenant.nombre} - GestMusica',
         recipients=[invitacion.email],
     )
-    msg.body = render_template(
-        'email/invitacion.txt',
-        invitacion=invitacion,
-        enlace=enlace,
-    )
-    msg.html = render_template(
-        'email/invitacion.html',
-        invitacion=invitacion,
-        enlace=enlace,
-    )
+    try:
+        msg.body = render_template('email/invitacion.txt',
+                                    invitacion=invitacion,
+                                    enlace=enlace)
+    except:
+        msg.body = f"""Hola{', ' + invitacion.nombre if invitacion.nombre else ''},
+
+{invitacion.invitador.nombre} te ha invitado a unirte a {invitacion.tenant.nombre} en GestMusica.
+
+Para activar tu cuenta: {enlace}
+
+Este enlace es válido durante 72 horas.
+"""
+
+    try:
+        msg.html = render_template('email/invitacion.html',
+                                    invitacion=invitacion,
+                                    enlace=enlace)
+    except:
+        msg.html = None
+
     _send(msg)
     logger.info(
         "Invitación enviada a %s (tenant=%s token=%s)",

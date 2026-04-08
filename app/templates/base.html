@@ -16,6 +16,10 @@
             GestMusica - {{ session.get('tenant_nombre', '') }}
         </a>
         <div class="nav-right">
+            {% if g.user and g.user.identity.is_root %}
+            <a href="{{ url_for('root.dashboard') }}" style="color: #ffd700;">Root</a>
+            {% endif %}
+
             {% if g.user.tiene_permiso('socios.ver') %}
             <a href="{{ url_for('socios.index') }}">Socios</a>
             {% endif %}

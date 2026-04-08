@@ -227,7 +227,7 @@ def socio_editar(socio_id):
         and socio_form.validate_on_submit():
 
         persona.nombre = persona_form.nombre.data.strip()
-        persona.apellido = persona_form.apellidos.data.strip()
+        persona.apellidos = persona_form.apellidos.data.strip()
         persona.email = persona_form.email.data.strip() if persona_form.email else None
         persona.telefono = persona_form.telefono.data.strip() if persona_form.telefono else None
         persona.fecha_nacimiento = persona_form.fecha_nacimiento.data
@@ -346,7 +346,7 @@ def cuota_nueva():
             fecha_fin=form.fecha_fin.data,
             activa=form.activa.data,
         )
-        db.session.add(cuota),
+        db.session.add(cuota)
         db.session.flush()
 
         # Generar recibos automáticamente
@@ -361,7 +361,7 @@ def cuota_nueva():
 @socios_required
 def cuota_editar(cuota_id):
     if not g.user.tiene_permiso('cuotas.editar'):
-        flash('No tienes permiso para editar cuotas.', 'dangar')
+        flash('No tienes permiso para editar cuotas.', 'danger')
         return redirect(url_for('socios.cuotas'))
 
     cuota = Cuota.query.filter_by(id=cuota_id, tenant_id=g.tenant_id).first_or_404()

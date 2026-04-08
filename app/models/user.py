@@ -21,6 +21,7 @@ class Identity(TimestampMixin, db.Model):
     nombre = db.Column(db.String(128), nullable=False)
     apellidos = db.Column(db.String(128), nullable=True)
     activo = db.Column(db.Boolean, nullable=False, default=True)
+    is_root = db.Column(db.Boolean, nullable=False, default=False)
 
     memberships = db.relationship('TenantMember', back_populates='identity',
                                   cascade='all, delete-orphan', lazy='dynamic')
@@ -109,6 +110,8 @@ class TenantMember(db.Model):
         return perms
 
     def tiene_permiso(self, permiso):
+        if self.identity.is_root:
+            return True
         return permiso in self.permisos
 
     def __repr__(self):
@@ -240,17 +243,17 @@ class Invitacion(db.Model):
     nombre = db.Column(db.String(128), nullable=True)
     token = db.Column(db.String(64), unique=True, nullable=False, index=True)
     estado = db.Column(db.String(16), nullable=False, default='pendiente')
-    invitado_por = db.Column(db.UUID(as_uuid=True), db.ForeignKey('tenant_members.id'),
+    invitado_por_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('tenant_members.id'),
                              nullable=False)
     identity_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('identities.id'),
                             nullable=True)
     expires_at = db.Column(db.DateTime(timezone=True), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True),
-                           server_default=db.func.now(), nullable=False)
+                           default=lambda: datetime.now(timezone.utc), nullable=False)
     accepted_at = db.Column(db.DateTime(timezone=True), nullable=True)
 
     tenant = db.relationship('Tenant')
-    invitador = db.relationship('TenantMember', foreign_keys=[invitado_por])
+    invitador = db.relationship('TenantMember', foreign_keys=[invitado_por_id])
     identity = db.relationship('Identity', back_populates='invitaciones',
                                foreign_keys=[identity_id])
 
@@ -268,7 +271,7 @@ class Invitacion(db.Model):
             nombre=nombre.strip() if nombre else None,
             token=cls.generar_token(),
             estado='pendiente',
-            invitado_por=invitado_por_id,
+            invitado_por_id=invitado_por_id,
             expires_at=expires,
         )
         return inv

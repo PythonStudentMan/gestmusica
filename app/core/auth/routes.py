@@ -32,6 +32,29 @@ def load_logged_in_user():
     Carga el usuario y tenant activo desde la sesión Flask.
     Se llama antes de cada request desde el blueprint.
     """
+    if session.get('is_root'):
+        identity_id = session.get('identity_id')
+        if identity_id:
+            identity = Identity.query.filter_by(id=identity_id, activo=True, is_root=True).first()
+            if identity:
+                # Creamos objeto similar a TenantMember para compatibilidad
+                class RootUser:
+                    def __init__(self, identity):
+                        self.identity = identity
+                        self.id = None
+                        self.nombre = identity.nombre
+                        self.apellidos = identity.apellidos
+                        self.email = identity.email
+                        self.tenant = None
+
+                    def tiene_permiso(self, permiso):
+                        return True
+
+                g.user = RootUser(identity)
+                g.tenant = None
+                g.tenant_id = None
+                return
+
     member_id = session.get('member_id')
     tenant_id = session.get('tenant_id')
 
@@ -100,6 +123,16 @@ def login():
         if not identity or not identity.check_password(password):
             flash('Email o contraseña incorrectos.', 'danger')
             return render_template('auth/login.html', form=form)
+
+        # Si es root, redirigimos directamente al panel root
+        if identity.is_root:
+            # Crear sesión sin tenant
+            session.clear()
+            session['identity_id'] = str(identity.id)
+            session['is_root'] = True
+            session.permanent = form.remember.data
+            flash(f'Bienvenido, {identity.nombre} (Superadministrador).', 'success')
+            return redirect(url_for('root.dashboard'))
 
         # Obtenere membresías activas
         member = TenantMember.query.filter_by(

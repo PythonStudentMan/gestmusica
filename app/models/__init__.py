@@ -6,3 +6,6 @@ from app.modules.socios.models import (
     SociosConfig, UnidadFamiliar, Persona, TutorLegal,
     TipoSocio, Socio, Cuota, Recibo,
 )
+from app.modules.musicos.models import (
+    Instrumento, Musico, MusicoSubagrupacion, MusicoInstrumento
+)

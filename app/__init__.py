@@ -37,6 +37,9 @@ def create_app(config_name='default'):
     from app.core.auth import auth_bp
     app.register_blueprint(auth_bp)
 
+    from app.core.root import root_bp
+    app.register_blueprint(root_bp)
+
     from app.core.admin import admin_bp
     app.register_blueprint(admin_bp)
 

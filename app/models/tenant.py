@@ -107,6 +107,7 @@ class Subagrupacion(db.Model):
                            server_default=db.func.now(), nullable=False)
 
     tenant = db.relationship('Tenant', back_populates='subagrupaciones')
+    musicos = db.relationship('MusicoSubagrupacion', back_populates='subagrupacion', lazy='dynamic')
 
     __table_args__ = (
         db.UniqueConstraint('tenant_id', 'nombre', name='uq_subagrupacion_nombre_per_tenant'),

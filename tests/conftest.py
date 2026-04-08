@@ -64,7 +64,7 @@ def usuario_en_cada_tenant(session, dos_tenants):
     session.flush()
 
     member_a = TenantMember(identity_id=identity_a.id, tenant_id=tenant_a.id, activo=True)
-    member_b = TenantMember(identity_id=identity_b. id, tenant_id=tenant_b.id, activo=True)
+    member_b = TenantMember(identity_id=identity_b.id, tenant_id=tenant_b.id, activo=True)
     session.add_all([member_a, member_b])
     session.flush()
     session.refresh(member_a)

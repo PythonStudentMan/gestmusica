@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }} - GestMusica{% endblock %}
+
+{% block content %}
+<div class="form-card">
+  <h2>{{ titulo }}</h2>
+  <form method="POST" novalidate>
+    {{ form.hidden_tag() }}
+
+    <div class="form-group">
+      {{ form.nombre.label }}
+      {{ form.nombre(placeholder='Banda Sinfónica de...') }}
+      {% for e in form.nombre.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="form-group">
+      {{ form.slug.label }}
+      {{ form.slug(placeholder='banda-sinfonica') }}
+      <p class="hint">{{ form.slug.description }}</p>
+      {% for e in form.slug.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="form-group">
+      {{ form.modo.label }}
+      {{ form.modo() }}
+      <p class="hint">{{ form.modo.description }}</p>
+    </div>
+
+    <div class="form-group checkbox">
+      {{ form.activo() }}
+      {{ form.activo.label }}
+    </div>
+
+    <div class="form-actions">
+      {{ form.submit(class='btn btn-primary') }}
+      <a href="{{ url_for('root.tenants') }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -80,6 +80,7 @@ class Persona(TimestampMixin, db.Model):
     identity = db.relationship('Identity')
     socio = db.relationship('Socio', back_populates='persona',
                             uselist=False, lazy='select')
+    musico = db.relationship('Musico', back_populates='persona', uselist=False, lazy='select')
     tutores = db.relationship('TutorLegal',
                               foreign_keys='TutorLegal.persona_menor_id',
                               back_populates='menor', lazy='dynamic')
