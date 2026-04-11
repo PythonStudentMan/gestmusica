@@ -2,73 +2,51 @@
 
 {% block title %}Iniciar sesión - GestMusica{% endblock %}
 
-{% block extra_css %}
-<style>
-.login-wrap {
-    min-height: calc(100vh - 52px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.login-card {
-    background: #fff;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: 2.5rem 2rem;
-    width: 100%;
-    max-width: 420px;
-}
-
-.login-card h1 {
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-    color: var(--color-primary);
-}
-
-.login-card .subtitle {
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-    margin-bottom: 2rem;
-}
-
-.btn-primary.full { width: 100%; margin-top: 0.5rem; }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="login-wrap">
-    <div class="login-card">
-        <h1>GestMusica</h1>
-        <p class="subtitle">Accede a tu agrupación musical</p>
+<div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-music fa-3x text-primary mb-3"></i>
+                        <h3 class="fw-bold">GestMusica</h3>
+                        <p class="text-secondary">Accede a tu agrupación musical</p>
+                    </div>
 
-        <form method="POST" novalidate>
-            {{ form.hidden_tag() }}
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
 
-            <div class="form-group">
-                {{ form.email.label }}
-                {{ form.email() }}
-                {% for error in form.email.errors %}
-                    <p class="field-error">{{ error }}</p>
-                {% endfor %}
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-envelope me-1"></i>{{ form.email.label.text }}
+                            </label>
+                            {{ form.email(class='form-control', placeholder='tu@email.com') }}
+                            {% for error in form.email.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-lock me-1"></i>{{ form.password.label.text }}
+                            </label>
+                            {{ form.password(class='form-control', placeholder='********') }}
+                            {% for error in form.password.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.remember(class='form-check-input') }}
+                            {{ form.remember.label(class='form-check-label') }}
+                        </div>
+
+                        {{ form.submit(class='btn btn-primary w-100 py-2') }}
+                    </form>
+                </div>
             </div>
-
-            <div class="form-group">
-                {{ form.password.label }}
-                {{ form.password() }}
-                {% for error in form.password.errors %}
-                    <p class="field-error">{{ error }}</p>
-                {% endfor %}
-            </div>
-
-            <div class="form-group checkbox">
-                {{ form.remember() }}
-                {{ form.remember.label }}
-            </div>
-
-            {{ form.submit(class='btn btn-primary') }}
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %}

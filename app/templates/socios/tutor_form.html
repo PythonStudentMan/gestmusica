@@ -2,28 +2,51 @@
 {% block title %}Añadir tutor legal - GestMusica{% endblock %}
 
 {% block content %}
-<div class="form-card">
-    <h2>Añadir tutor legal</h2>
-    <p class="subtitulo">Menor: {{ socio.nombre_completo }}</p>
-    <form method="POST" novalidate>
-        {{ form.hidden_tag() }}
-        <div class="form-group">
-            {{ form.persona_tutor_id.label }} {{ form.persona_tutor_id() }}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Añadir tutor legal
+                </h4>
+            </div>
+            <div class="card-body">
+                <p class="text-secondary">Menor: <strong>{{ socio.nombre_completo }}</strong></p>
+
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.persona_tutor_id.label(class='form-label') }}
+                        {{ form.persona_tutor_id(class='form-select') }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.relacion.label(class='form-label') }}
+                        {{ form.relacion(class='form-select') }}
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        {{ form.patria_potestad(class='form-check-input') }}
+                        {{ form.patria_potestad.label(class='form-check-label' }}
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        {{ form.firma_requerida(class='form-check-input') }}
+                        {{ form.firma_requerida.label(class='form-check-label') }}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        {{ form.submit(class='btn btn-primary') }}
+                        <a href="{{ url_for('socios.socio_detalle', socio_id=socio.id) }}"
+                           class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            {{ form.relacion.label }} {{ form.relacion() }}
-        </div>
-        <div class="form-group checkbox">
-            {{ form.patria_potestad() }} {{ form.patria_potestad.label }}
-        </div>
-        <div class="form-group checkbox">
-            {{ form.firma_requerida() }} {{ form.firma_requerida.label }}
-        </div>
-        <div class="form-actions">
-            {{ form.submit(class='btn btn-primary') }}
-            <a href="{{ url_for('socios.socio_detalle', socio_id=socio.id) }}"
-               class="btn btn-secondary">Cancelar</a>
-        </div>
-    </form>
+    </div>
 </div>
 {% endblock %}

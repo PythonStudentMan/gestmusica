@@ -38,6 +38,8 @@ class Musico(TimestampMixin, db.Model):
                           nullable=False, index=True)
     persona_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('personas.id'),
                            nullable=False, index=True)
+    identity_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('identities.id'),
+                            nullable=False, index=True)
 
     fecha_ingreso = db.Column(db.Date, nullable=False, default=date.today)
     fecha_baja = db.Column(db.Date, nullable=True)
@@ -46,6 +48,7 @@ class Musico(TimestampMixin, db.Model):
 
     tenant = db.relationship('Tenant')
     persona = db.relationship('Persona', back_populates='musico')
+    identity = db.relationship('Identity')
     subagrupaciones = db.relationship('MusicoSubagrupacion', back_populates='musico',
                                       lazy='dynamic')
     instrumentos = db.relationship('MusicoInstrumento', back_populates='musico',

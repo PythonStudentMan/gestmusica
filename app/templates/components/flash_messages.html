@@ -1,0 +1,28 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      {% set alert_class = {
+        'success': 'success',
+        'danger': 'danger',
+        'error': 'error',
+        'warning': 'warning',
+        'info': 'info'
+      }.get(category, 'secondary') %}
+
+      {% set icon = {
+        'success': 'fa-check-circle',
+        'danger': 'fa-exclamation-circle',
+        'error': 'fa-exclamation-circle',
+        'warning': 'fa-exclamation-triangle',
+        'info': 'fa-info-circle',
+        'message': 'fa-info-circle'
+      }.get(category, 'fa-info-circle') %}
+
+      <div class="alert alert-{{ alert_class }} alert-dismissible fade show border-0" role="alert">
+        <i class="fas {{ icon }} me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}

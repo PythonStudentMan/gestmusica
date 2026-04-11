@@ -3,74 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación a GestMusica</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f1f5f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        .email-wrapper {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .email-header {
+            background: linear-gradient(135deg, #4361ee 0%, #3651d4 100%);
+            padding: 32px 40px;
+            text-align: center;
+        }
+        .email-header h1 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.5px:
+        }
+        .email-header p {
+            margin: 8px 0 0;
+            color: rgba(255,255,255,0.85);
+            font-size: 16px;
+        }
+        .email-body {
+            padding: 40px;
+        }
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0 0 16px;
+        }
+        .message {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #475569;
+            margin: 0 0 24px;
+        }
+        .message strong {
+            color: #1e293b;
+        }
+        .button-wrapper {
+            text-align: center;
+            margin: 32px 0;
+        }
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #4361ee 0%, #3651d4 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 14px 36px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgba(67, 97, 238, 0.3);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(67, 97, 238, 0.4);
+        }
+        .link-fallback {
+            margin: 20px 0 0;
+            font-size: 13px;
+            color: #94a3b8;
+            word-break: break-all;
+        }
+        .link-fallback a {
+            color: #4361ee;
+            text-decoration: none;
+        }
+        .email-footer {
+            padding: 24px 40px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            background-color: #f8fafc;
+        }
+        .email-footer p {
+            margin: 0;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        .logo-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .info-box {
+            background-color: #f0f9ff;
+            border-left: 4px solid #4361ee;
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 24px 0;
+        }
+        .info-box p {
+            margin: 0;
+            font-size: 14px;
+            color: #1e293b;
+        }
+        .info-box i {
+            color: #4361ee;
+            margin-right: 8px;
+        }
+    </style>
 </head>
-<body style="margin:0;pading:0;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
-<table width="100%" cellspacing="0" cellpadding="0" style="background:#f5f5f5;pading:40px 0;">
-    <tr>
-        <td align="center">
-            <table width="520" cellpadding="0" cellspacing="0"
-                   style="background:#ffffff;border-radius:10px;border:1px solid #e0e0e0;overflow:hidden;">
+<body style="margin:0;pading:40px 20px;background:#f1f5f9;">
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
+        <tr>
+            <td align="center">
+                <div class="email-wrapper">
+                    <!-- Cebecera -->
+                    <div class="email-header">
+                        <div class="logo-icon"><i class="fas fa-music"></i></div>
+                        <h1>GestMusica</h1>
+                        <p>{{ invitacion.tenant.nombre }}</p>
+                    </div>
 
-                <!--Cabecera-->
-                <tr>
-                    <td style="background:#1a1a2e;padding:28px 40px;">
-                        <p style="margin:0;color:#ffffff;font-size:1.1rem;font-weight:600;">GestMusica</p>
-                        <p style="margin:4px 0 0;color:rgba(255,255,255,0.6);font-size:0.85rem;">
-                            {{ invitacion.tenant.nombre }}
-                        </p>
-                    </td>
-                </tr>
-
-                <!-- Cuerpo -->
-                <tr>
-                    <td style="padding:36px 40px;">
-                        <p style="margin:0 0 16px;font-size:1rem:color:#1a1a2e;font-weight:600;">
+                    <!-- Cuerpo -->
+                    <div class="email-body">
+                        <p class="greeting">
                             Hola{% if invitacion.nombre %}, {{ invitacion.nombre }}{% endif %},
                         </p>
-                        <p style="margin:0 0 16px;font-size:0.95rem;color:#444;line-height:1.6;">
+
+                        <p class="message">
                             <strong>{{ invitacion.invitador.nombre }}</strong> te ha invitado a unirte a
-                            <strong>{{ invitacion.tenant.nombre }}</strong> en GestMusica.
+                            <strong>{{ invitacion.tenant.nombre }}</strong> en GestMusica, la plataforma
+                            de gestión para agrupaciones musicales.
                         </p>
-                        <p style="margin:0 0 28px;font-size:0.95rem;color:#444;line-height:1.6;">
-                            Haz clic en el botón para activar tu cuenta y establecer tu contraseña.
-                            El enlace es válido durante <strong>72 horas</strong>.
+
+                        <div class="info-box">
+                            <p>
+                                <span style="display:block; margin-bottom: 6px;">¿Qué puedes hacer en GestMusica?</span>
+                                * Gestionar socios y cuotas<br>
+                                * Organizar músicos por secciones<br>
+                                * Planificar eventos y actuaciones<br>
+                                * Y muchos más...
+                            </p>
+                        </div>
+
+                        <p class="message">
+                            Haz clic en el botón de abajo para activar tu cuenta y establecer tu contraseña.
+                            <br><br>
+                            <strong>El enlace es válido durante 72 horas.</strong>
                         </p>
 
                         <!--Botón-->
-                        <table cellpadding="0" cellspacing="0">
-                            <tr>
-                                <td style="border-radius:6px;background:#1a1a2e;">
-                                    <a href="{{ enlace }}"
-                                       style="display:inline-block;padding:12px 28px;color:#ffffff;
-                                              font-size:0.95rem;font-weight:500;text-decoration:none;
-                                              border-radius:6px;">
-                                        Activar mi cuenta
-                                    </a>
-                                </td>
-                            </tr>
-                        </table>
+                        <div class="button-wrapper">
+                            <a href="{{ enlace }}" class="button">
+                                Activar mi cuenta
+                            </a>
+                        </div>
 
                         <!-- Enlace de texto por si el botón no carga -->
-                        <p style="margin:20px 0 0;font-size:0.8rem;color:#888;">
-                            O copia este enlace en tu navegador:<br>
-                            <a href="{{ enlace }}" style="color:#1a1a2e;word-bread:break-all;">{{ enlace }}</a>
+                        <p class="link-fallback">
+                            Si el botón no funciona, copia y pega este enlace en tu navegador:<br>
+                            <a href="{{ enlace }}">{{ enlace }}</a>
                         </p>
-                    </td>
-                </tr>
+                    </div>
 
-                <!-- Pie -->
-                <tr>
-                    <td style="padding:20px 40px;border-top:1px solid #f0f0f0;">
-                        <p style="margin:0;font-size:0.8rem;color:#aaa;">
+                    <!-- Pie -->
+                    <div class="email-footer">
+                        <p>
                             Si no esperabas esta invitación, puedes ignorar este mensaje.
                         </p>
-                    </td>
-                </tr>
-
-            </table>
-        </td>
-    </tr>
-</table>
-
+                        <p style="margin-top:12px;">
+                            GestMusica · Plataforma de Gestión para Agrupaciones Musicales
+                        </p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

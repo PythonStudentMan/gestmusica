@@ -2,73 +2,102 @@
 {% block title %}Recibos - GestMusica{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>Recibos</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-title">
+        <i class="fas fa-receipt"></i> Recibos
+    </h2>
 </div>
 
-<div class="filtros">
-    <a href="{{ url_for('socios.recibos', estado='pendiente') }}"
-       class="btn btn-sm {% if estado == 'pendiente' %}btn-active{% else %}btn-secondary{% endif %}">
-        Pendientes
-    </a>
-    <a href="{{ url_for('socios.recibos', estado='vencido') }}"
-       class="btn btn-sm {% if estado == 'vencido' %}btn-active{% else %}btn-secondary{% endif %}">
-        Vencidos
-    </a>
-    <a href="{{ url_for('socios.recibos', estado='pagado') }}"
-       class="btn btn-sm {% if estado == 'pagado' %}btn-active{% else %}btn-secondary{% endif %}">
-        Pagados
-    </a>
-    <a href="{{ url_for('socios.recibos', estado='todos') }}"
-       class="btn btn-sm {% if estado == 'todos' %}btn-active{% else %}btn-secondary{% endif %}">
-        Todos
-    </a>
+<!-- Filtros -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="btn-group" role="group">
+            <a href="{{ url_for('socios.recibos', estado='pendiente') }}"
+               class="btn btn-outline-warning {% if estado == 'pendiente' %}active{% endif %}">
+                <i class="fas fa-clock me-1"></i> Pendientes
+            </a>
+            <a href="{{ url_for('socios.recibos', estado='vencido') }}"
+               class="btn btn-outline-danger {% if estado == 'vencido' %}active{% endif %}">
+                <i class="fas fa-exclamation-circle me-1"></i> Vencidos
+            </a>
+            <a href="{{ url_for('socios.recibos', estado='pagado') }}"
+               class="btn btn-outline-success {% if estado == 'pagado' %}active{% endif %}">
+                <i class="fas fa-check-circle me-1"></i> Pagados
+            </a>
+            <a href="{{ url_for('socios.recibos', estado='todos') }}"
+               class="btn btn-outline-primary {% if estado == 'todos' %}active{% endif %}">
+                <i class="fas fa-list me-1"></i> Todos
+            </a>
+        </div>
+    </div>
 </div>
 
-{% if recibos %}
-<table>
-    <thead>
-        <tr>
-            <th>Número</th>
-            <th>Socio</th>
-            <th>Cuota</th>
-            <th>Importe</th>
-            <th>Vencimiento</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for r in recibos %}
-        <tr>
-            <td>{{ r.numero_recibo }}</td>
-            <td>{{ r.socio.nombre_completo }}</td>
-            <td>{{ r.cuota.descripcion }}</td>
-            <td>{{ '%.2f'|format(r.importe_final) }} €</td>
-            <td>{{ r.fecha_vencimiento.strftime('%d/%m/%Y') }}</td>
-            <td>
-                <span class="badge badge-{{ r.estado }}">{{ r.estado|capitalize }}</span>
-            </td>
-            <td>
-                <div class="actions">
-                    {% if r.estado in ['pendiente', 'vencido'] %}
-                    <a href="{{ url_for('socios.recibo_pagar', recibo_id=r.id) }}"
-                       class="btn btn-primary btn-sm">Pagar</a>
-                    <form method="POST"
-                          action="{{ url_for('socios.recibo_anular', recibo_id=r.id) }}"
-                          style="display:inline"
-                          onsubmit="return confirm('¿Anular este recibo?')">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="btn btn-sm btn-secondary">Anular</button>
-                    </form>
-                    {% endif %}
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p style="var(--color-text-muted);">No hay recibos en ese estado.</p>
-{% endif %}
+<!-- Listado -->
+<div class="card">
+    <div class="card-body p-0">
+        {% if recibos %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Socio</th>
+                        <th>Cuota</th>
+                        <th>Importe</th>
+                        <th>Vencimiento</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in recibos %}
+                    <tr>
+                        <td><span class="fw-medium">{{ r.numero_recibo }}</span></td>
+                        <td>{{ r.socio.nombre_completo }}</td>
+                        <td>{{ r.cuota.descripcion }}</td>
+                        <td>{{ '%.2f'|format(r.importe_final) }} €</td>
+                        <td>{{ r.fecha_vencimiento.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            {% if r.estado == 'pagado' %}
+                                <span class="badge bg-success">Pagado</span>
+                            {% elif r.estado == 'pendiente' %}
+                                <span class="badge bg-warning text-dark">Pendiente</span>
+                            {% elif r.estado == 'vencido' %}
+                                <span class="badge bg-danger">Vencido</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ r.estado|capitalize }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group" role="group">
+                                {% if r.estado in ['pendiente', 'vencido'] %}
+                                <a href="{{ url_for('socios.recibo_pagar', recibo_id=r.id) }}"
+                                   class="btn btn-sm btn-outline-success" title="Registrar pago">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                <form method="POST"
+                                      action="{{ url_for('socios.recibo_anular', recibo_id=r.id) }}"
+                                      class="d-inline"
+                                      onsubmit="return confirm('¿Anular este recibo?')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Anular">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-receipt"></i>
+            <p>No hay recibos en ese estado.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

@@ -2,45 +2,63 @@
 {% block title %}{{ titulo }} - GestMusica{% endblock %}
 
 {% block content %}
-<div class="form-card">
-    <h2>{{ titulo }}</h2>
-    <form method="POST" novalidate>
-        {{ form.hidden_tag() }}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">{{ titulo }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
 
-        <div class="form-group">
-            {{ form.nombre.label }}
-            {{ form.nombre() }}
-            {% for e in form.nombre.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
-        </div>
+                    <div class="mb-3">
+                        {{ form.nombre.label(class='form-label') }}
+                        {{ form.nombre(class='form-control') }}
+                        {% for e in form.nombre.errors %}
+                            <div class="invalid-feedback d-block">{{ e }}</div>
+                        {% endfor %}
+                    </div>
 
-        <div class="form-group">
-            {{ form.apellidos.label }}
-            {{ form.apellidos() }}
-            {% for e in form.apellidos.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
-        </div>
+                    <div class="mb-3">
+                        {{ form.apellidos.label(class='form-label') }}
+                        {{ form.apellidos(class='form-control') }}
+                        {% for e in form.apellidos.errors %}
+                            <div class="invalid-feedback d-block">{{ e }}</div>
+                        {% endfor %}
+                    </div>
 
-        <div class="form-group">
-            {{ form.email.label }}
-            {{ form.email() }}
-            {% for e in form.email.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
-        </div>
+                    <div class="mb-3">
+                        {{ form.email.label(class='form-label') }}
+                        {{ form.email(class='form-control') }}
+                        {% for e in form.email.errors %}
+                            <div class="invalid-feedback d-block">{{ e }}</div>
+                        {% endfor %}
+                    </div>
 
-        <div class="form-group">
-            {{ form.password.label }}
-            {{ form.password() }}
-            <p class="hint">{{ form.password.description }}</p>
-            {% for e in form.password.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
-        </div>
+                    <div class="mb-3">
+                        {{ form.password.label(class='form-label') }}
+                        {{ form.password(class='form-control') }}
+                        <small class="form-text text-secondary">{{ form.password.description }}</small>
+                        {% for e in form.password.errors %}
+                            <div class="invalid-feedback d-block">{{ e }}</div>
+                        {% endfor %}
+                    </div>
 
-        <div class="form-group-checkbox">
-            {{ form.activo() }}
-            {{ form.activo.label }}
-        </div>
+                    <div class="mb-3 form-check">
+                        {{ form.activo(class='form-check-input') }}
+                        {{ form.activo.label(class='form-check-label') }}
+                    </div>
 
-        <div class="form-actions">
-            {{ form.submit(class='btn btn-primary') }}
-            <a href="{{ url_for('admin.usuarios') }}" class="btn btn-secondary">Cancelar</a>
+                    <div class="d-flex gap-2">
+                        {{ form.submit(class='btn btn-primary') }}
+                        <a href="{{ url_for('admin.usuarios') }}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
-    </form>
+    </div>
 </div>
 {% endblock %}

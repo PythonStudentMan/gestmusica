@@ -419,3 +419,189 @@ def invitacion_cancelar(inv_id):
     db.session.commit()
     flash(f'Invitación a {inv.email} cancelada.', 'success')
     return redirect(url_for('admin.invitaciones'))
+
+
+# ---- Subagrupaciones -----------------------------------------------------------
+
+@admin_bp.route('/subagrupaciones/')
+@admin_required
+def subagrupaciones():
+    from app.models.tenant import Subagrupacion
+    subags = Subagrupacion.query.filter_by(tenant_id=g.tenant_id).order_by(
+        Subagrupacion.nombre
+    ).all()
+    return render_template('admin/subagrupaciones.html', subagrupaciones=subags)
+
+
+@admin_bp.route('/subagrupaciones/nueva/', methods=['GET', 'POST'])
+@admin_required
+def subagrupacion_nueva():
+    from app.models.tenant import Subagrupacion
+    from app.core.admin.forms import SubagrupacionForm
+
+    form = SubagrupacionForm()
+
+    if form.validate_on_submit():
+        existente = Subagrupacion.query.filter_by(
+            tenant_id=g.tenant_id, nombre=form.nombre.data.strip()
+        ).first()
+        if existente:
+            flash('Ya existe una sección con ese nombre.', 'danger')
+            return render_template('admin/subagrupacion_form.html',
+                                   form=form, titulo='Nueva sección')
+
+        subag = Subagrupacion(
+            tenant_id=g.tenant_id,
+            nombre=form.nombre.data.strip(),
+            descripcion=form.descripcion.data,
+            activa=form.activa.data,
+        )
+        db.session.add(subag)
+        db.session.commit()
+        flash(f'Sección "{subag.nombre}" creada correctamente.', 'success')
+        return redirect(url_for('admin.subagrupaciones'))
+
+    return render_template('admin/subagrupacion_form.html',
+                           form=form, titulo='Nueva sección')
+
+
+@admin_bp.route('/subagrupaciones/<uuid:subag_id>/editar/', methods=['GET', 'POST'])
+@admin_required
+def subagrupacion_editar(subag_id):
+    from app.models.tenant import Subagrupacion
+    from app.core.admin.forms import SubagrupacionForm
+
+    subag = Subagrupacion.query.filter_by(
+        id=subag_id, tenant_id=g.tenant_id
+    ).first_or_404()
+    form = SubagrupacionForm(obj=subag)
+
+    if form.validate_on_submit():
+        existente = Subagrupacion.query.filter(
+            Subagrupacion.tenant_id == g.tenant_id,
+            Subagrupacion.nombre == form.nombre.data.strip(),
+            Subagrupacion.id != subag.id
+        ).first()
+        if existente:
+            flash('Ya existe otra sección con ese nombre.', 'danger')
+            return render_template('admin/subagrupacion_form.html',
+                                   form=form, titulo='Editar sección', subag=subag)
+
+        subag.nombre = form.nombre.data.strip()
+        subag.descripcion = form.descripcion.data
+        subag.activa = form.activa.data
+        db.session.commit()
+        flash(f'Sección "{subag.nombre}" actualizada.', 'success')
+        return redirect(url_for('admin.subagrupaciones'))
+
+    return render_template('admin/subagrupacion_form.html',
+                           form=form, titulo='Editar sección', subag=subag)
+
+
+@admin_bp.route('/subagrupaciones/<uuid:subag_id>/toggle/', methods=['POST'])
+@admin_required
+def subagrupacion_toggle(subag_id):
+    from app.models.tenant import Subagrupacion
+
+    subag = Subagrupacion.query.filter_by(
+        id=subag_id, tenant_id=g.tenant_id
+    ).first_or_404()
+    subag.activa = not subag.activa
+    db.session.commit()
+
+    estado = 'activada' if subag.activa else 'desactivada'
+    flash(f'Sección "{subag.nombre}" {estado}.', 'success')
+    return redirect(url_for('admin.subagrupaciones'))
+
+
+# ---- Instrumentos ------------------------------------------------------
+
+@admin_bp.route('/instrumentos/')
+@admin_required
+def instrumentos():
+    from app.modules.musicos.models import Instrumento
+    insts = Instrumento.query.filter_by(tenant_id=g.tenant_id).order_by(
+        Instrumento.nombre
+    ).all()
+    return render_template('admin/instrumentos.html', instrumentos=insts)
+
+
+@admin_bp.route('/instrumentos/nuevo/', methods=['GET', 'POST'])
+@admin_required
+def instrumento_nuevo():
+    from app.modules.musicos.models import Instrumento
+    from app.core.admin.forms import InstrumentoForm
+
+    form = InstrumentoForm()
+
+    if form.validate_on_submit():
+        existente = Instrumento.query.filter_by(
+            tenant_id=g.tenant_id, nombre=form.nombre.data.strip()
+        ).first()
+        if existente:
+            flash('Ya existe un instrumento con ese nombre', 'danger')
+            return render_template('admin/instrumento_form.html',
+                                   form=form, titulo='Nuevo instrumento')
+
+        inst = Instrumento(
+            tenant_id=g.tenant_id,
+            nombre=form.nombre.data.strip(),
+            familia=form.familia.data or None,
+            activo=form.activo.data,
+        )
+        db.session.add(inst)
+        db.session.commit()
+        flash(f'Instrumento "{inst.nombre}" creado correctamente.', 'success')
+        return redirect(url_for('admin.instrumentos'))
+
+    return render_template('admin/instrumento_form.html',
+                           form=form, titulo='Nuevo instrumento')
+
+
+@admin_bp.route('/instrumentos/<uuid:inst_id>/editar/', methods=['GET', 'POST'])
+@admin_required
+def instrumento_editar(inst_id):
+    from app.modules.musicos.models import Instrumento
+    from app.core.admin.forms import InstrumentoForm
+
+    inst = Instrumento.query.filter_by(
+        id=inst_id, tenant_id=g.tenant_id
+    ).first_or_404()
+    form = InstrumentoForm(obj=inst)
+
+    if form.validate_on_submit():
+        existente = Instrumento.query.filter(
+            Instrumento.tenant_id == g.tenant_id,
+            Instrumento.nombre == form.nombre.data.strip(),
+            Instrumento.id != inst.id
+        ).first()
+        if existente:
+            flash('Ya existe otro instrumento con ese nombre', 'danger')
+            return render_template('admin/instrumento_form.html',
+                                   form=form, titulo='Editar instrumento', inst=inst)
+
+        inst.nombre = form.nombre.data.strip()
+        inst.familia = form.familia.data or None
+        inst.activo = form.activo.data
+        db.session.commit()
+        flash(f'Instrumento "{inst.nombre}" actualizado', 'success')
+        return redirect(url_for('admin.instrumentos'))
+
+    return render_template('admin/instrumento_form.html',
+                           form=form, titulo='Editar instrumento', inst=inst)
+
+
+@admin_bp.route('/instrumentos/<uuid:inst_id>/toggle/', methods=['POST'])
+@admin_required
+def instrumento_toggle(inst_id):
+    from app.modules.musicos.models import Instrumento
+
+    inst = Instrumento.query.filter_by(
+        id=inst_id, tenant_id=g.tenant_id
+    ).first_or_404()
+    inst.activo = not inst.activo
+    db.session.commit()
+
+    estado = 'activado' if inst.activo else 'desactivado'
+    flash(f'Instrumento "{inst.nombre}" {estado}.', 'success')
+    return redirect(url_for('admin.instrumentos'))

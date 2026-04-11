@@ -3,8 +3,67 @@
 {% block title %}Dashboard - GestMusica{% endblock %}
 
 {% block content %}
-<h2>Bienvenido, {{ g.user.nombre }}</h2>
-<p style="color: var(--color-text-muted); margin-top: 0.5rem;">
-    Agrupación: <strong>{{ session.get('tenant_nombre') }}</strong>
-</p>
+<div class="mb-4">
+    <h2 class="page-title">
+        <i class="fas fa-tachometer-alt"></i>Dashboard
+    </h2>
+    <p class="text-secondary"> Panel principal de {{ session.get('tenant_nombre') }}</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                        <i class="fas fa-user-circle fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-0">Bienvenido, {{ g.user.nombre }}</h5>
+                        <p class="text-secondary mb-0">{{ g.user.email }}</p>
+                    </div>
+                </div>
+                <hr>
+                <p class="mb-1"><strong>Agrupación:</strong> {{ session.get('tenant_nombre') }}</p>
+                <p class="mb-0"><strong>Rol:</strong> Miembro</p>
+            </div>
+        </div>
+    </div>
+
+    {% if g.user.tiene_permiso('socios.ver') %}
+    <div class="col-md-6 col-lg-5">
+        <div class="card h-100 hover-lift cursor-pointer" onclick="window.location='{{ url_for('socios.index') }}'">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-users fa-2x text-primary me-3"></i>
+                    <h5 class="card-title mb-0">Módulo de Socios</h5>
+                </div>
+                <p class="text-secondary">Gestiona los socios, cuotas y recibos de la agrupación.</p>
+
+                <a href="{{ url_for('socios.index') }}" class="btn btn-outline-primary btn-sm">
+                    Acceder <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if g.user.tiene_permiso('musicos.ver_todos') or g.user.tiene_permiso('musicos.ver_propio') %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 hover-lift cursor-pointer" onclick="'window.location='{{ url_for('musicos.index') }}'">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-guitar fa-2x text-primary me-3"></i>
+                    <h5 class="card-title mb-0">Módulo de Músicos</h5>
+                </div>
+                <p class="text-secondary">Gestiona los músicos, sus instrumentos y secciones</p>
+
+                <a href="{{ url_for('musicos.index') }}" class="btn btn-outline-primary btn-sm">
+                    Acceder <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

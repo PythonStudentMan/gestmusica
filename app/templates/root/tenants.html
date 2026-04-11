@@ -2,57 +2,81 @@
 {% block title %}Agrupaciones - GestMusica{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>Todas las agrupaciones</h2>
-    <a href="{{ url_for('root.tenant_nuevo') }}" class="btn btn-primary">+ Nueva agrupación</a>
+<div class="d-flex justity-content-between aling-items-center mb-4">
+    <h2 class="page-title">
+        <i class="fas fa-building"></i> Todas las agrupaciones
+    </h2>
+    <a href="{{ url_for('root.tenant_nuevo') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> Nueva agrupación
+    </a>
 </div>
 
-{% if tenants %}
-<table>
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Slug</th>
-            <th>Modo</th>
-            <th>Estado</th>
-            <th>Creada</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for t in tenants %}
-        <tr>
-            <td>{{ t.nombre }}</td>
-            <td>{{ t.slug }}</td>
-            <td>{{ t.modo }}</td>
-            <td>
-                <span class="badge {% if t.activo %}badge-success{% else %}badge-danger{% endif %}">
-                    {{ 'Activo' if t.activo else 'Inactivo' }}
-                </span>
-            </td>
-            <td>{{ t.created_at.strftime('%d/%m/%Y') }}</td>
-            <td>
-                <div class="actions">
-                    <a href="{{ url_for('root.tenant_entrar', tenant_id=t.id) }}"
-                       class="btn btn-sm btn-primary">Entrar</a>
-                    <a href="{{ url_for('root.tenant_editar', tenant_id=t.id) }}"
-                       class="btn btn-sm btn-secondary">Editar</a>
-                    <form method="POST"
-                          action="{{ url_for('root.tenant_toggle', tenant_id=t.id) }}"
-                          style="display:inline;"
-                          onsubmit="return confirm('¿Cambiar estado de {{ t.nombre }}?')">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="btn btn-sm {% if t.activo %}btn-danger{% else %}btn-success{% endif %}">
-                            {{ 'Desactivar' if t.activo else 'Activar' }}
-                        </button>
-                    </form>
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p style="color:var(--color-text-muted);">No hay agrupaciones registradas.</p>
-{% endif %}
+<div class="card">
+    <div class="card-body p-0">
+        {% if tenants %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-4">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Slug</th>
+                        <th>Modo</th>
+                        <th>Estado</th>
+                        <th>Creada</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in tenants %}
+                    <tr>
+                        <td>{{ t.nombre }}</td>
+                        <td>{{ t.slug }}</td>
+                        <td><span class="badge bg-light text-dark">{{ t.modo }}</span></td>
+                        <td>
+                            {% if t.activo %}
+                                <span class="badge bg-success">Activo</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ t.created_at.strftime('%d/%m/%Y') }}</td>
+                        <td class="text-end">
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('root.tenant_entrar', tenant_id=t.id) }}"
+                                   class="btn btn-sm btn-primary" title="Entrar como admin">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a>
+                                <a href="{{ url_for('root.tenant_editar', tenant_id=t.id) }}"
+                                   class="btn btn-sm btn-outline-secondary" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form method="POST"
+                                      action="{{ url_for('root.tenant_toggle', tenant_id=t.id) }}"
+                                      class="d-inline;"
+                                      onsubmit="return confirm('¿Cambiar estado de {{ t.nombre }}?')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit"
+                                            class="btn btn-sm {% if t.activo %}btn-outline-danger{% else %}btn-outline-success{% endif %}"
+                                            title="{{ 'Desactivar' if t.activo else 'Activar' }}">
+                                        <i class="fas {% if t.activo %}fa-ban{% else %}fa-check{% endif %}"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-building"></i>
+            <p>No hay agrupaciones registradas.</p>
+            <a href="{{ url_for(root.tenant_nuevo') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Crear primera agrupación
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

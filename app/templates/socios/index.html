@@ -2,34 +2,114 @@
 {% block title %}Socios - GestMusica{% endblock %}
 
 {% block content %}
-<h2 style="margin-bottom: 1.5rem; font-size: 1.3rem; font-weight: 600; color: var(--color-primary);">
-    Módulo de Socios
-</h2>
+<div class="mb-4">
+    <h2 class="page-title">
+        <i class="fas fa-users"></i> Módulo de Socios
+    </h2>
+    <p class="text-secondary">Gestiona los socios, cuotas y recibos de la agrupación.</p>
+</div>
 
-<div class="stats">
-    <div class="stat-card">
-        <div class="number">{{ total_activos }}</div>
-        <div class="label">Socios activos</div>
+<!-- Stats -->
+<div class="row g-4 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3">
+                            <i class="fas fa-user-check fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h3 class="mb-0 fw-bold">{{ total_activos }}</h3>
+                        <p class="text-secondary mb-0">Socios activos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="stat-card">
-        <div class="number">{{ total_bajas }}</div>
-        <div class="label">Bajas</div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-circle bg-danger bg-opacity-10 p-3">
+                            <i class="fas fa-user-slash fa-2x text-danger"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h3 class="mb-0 fw-bold">{{ total_bajas }}</h3>
+                        <p class="text-secondary mb-0">Bajas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="stat-card {% if recibos_pendientes > 0 %}warning{% endif %}">
-        <div class="number">{{ recibos_pendientes }}</div>
-        <div class="label">Recibos pendientes</div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-circle bg-warning bg-opacity-10 p-3">
+                            <i class="fas fa-clock fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h3 class="mb-0 fw-bold">{{ recibos_pendientes }}</h3>
+                        <p class="text-secondary mb-0">Recibos pendientes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="stat-card {% if recibos_vencidos > 0 %}danger{% endif %}">
-        <div class="number">{{ recibos_vencidos }}</div>
-        <div class="label">Recibos vencidos</div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-circle bg-danger bg-opacity-10 p-3">
+                            <i class="fas fa-exclamation-circle fa-2x text-danter"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h3 class="mb-0 fw-bold">{{ recibos_vencidos }}</h3>
+                        <p class="text-secondary mb-0">Recibos vencidos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="nav-socios">
-    <a href="{{ url_for('socios.lista') }}" class="btn btn-primary">Ver socios</a>
-    <a href="{{ url_for('socios.cuotas') }}" class="btn btn-secondary">Cuotas</a>
-    <a href="{{ url_for('socios.recibos') }}" class="btn btn-secondary">Recibos</a>
-    <a href="{{ url_for('socios.tipos_socio') }}" class="btn btn-secondary">Tipos de Socio</a>
-    <a href="{{ url_for('socios.config') }}" class="btn btn-secondary">Configuración</a>
+<!-- Acciones rápidas -->
+
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Acciones rápidas</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{{ url_for('socios.lista') }}" class="btn btn-primary">
+                        <i class="fas fa-list me-1"></i> Ver socios
+                    </a>
+                    <a href="{{ url_for('socios.socio_nuevo') }}" class="btn btn-outline_primary">
+                        <i class="fas fa-plus me-1"></i> Nuevo socio
+                    </a>
+                    <a href="{{ url_for('socios.cuotas') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-file-invoice me-1"></i> Cuotas
+                    </a>
+                    <a href="{{ url_for('socios.recibos') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-receipt me-1"></i> Recibos
+                    </a>
+                    <a href="{{ url_for('socios.tipos_socio') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-tags me-1"></i> Tipos de Socio
+                    </a>
+                    <a href="{{ url_for('socios.config') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-cog me-1"></i> Configuración
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

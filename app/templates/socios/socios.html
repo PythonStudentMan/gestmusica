@@ -2,67 +2,99 @@
 {% block title %}Lista de socios - GestMusica{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>Socios</h2>
-    <a href="{{ url_for('socios.socio_nuevo') }}" class="btn btn-primary">+ Nuevo socio</a>
-</div>
-
-<div class="filtros">
-    <a href="{{ url_for('socios.lista', estado='activo') }}"
-       class="btn btn-sm {% if estado == 'activo' %}btn-active{% else %}btn-secondary{% endif %}">
-        Activos
-    </a>
-    <a href="{{ url_for('socios.lista', estado='baja') }}"
-       class="btn btn-sm {% if estado == 'baja' %}btn-active{% else %}btn-secondary{% endif %}">
-        Bajas
-    </a>
-    <a href="{{ url_for('socios.lista', estado='todos') }}"
-       class="btn btn-sm {% if estado == 'todos' %}btn-active{% else %}btn-secondary{% endif %}">
-        Todos
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-title">
+        <i class="fas fa-users"></i> Socios
+    </h2>
+    <a href="{{ url_for('socios.socio_nuevo') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> Nuevo socio
     </a>
 </div>
 
-{% if socios %}
-<table>
-    <thead>
-        <tr>
-            <th>Nº Socio</th>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Fecha alta</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for s in socios %}
-        <tr>
-            <td>{{ s.numero_socio }}</td>
-            <td>{{ s.nombre_completo }}</td>
-            <td>{{ s.tipo_socio.nombre }}</td>
-            <td>{{ s.fecha_alta.strftime('%d/%m/%Y') }}</td>
-            <td>
-                <span class="badge badge-{{ s.estado }}">
-                    {{ s.estado|capitalize }}
-                </span>
-            </td>
-            <td>
-                <div class="actions">
-                    <a href="{{ url_for('socios.socio_detalle', socio_id=s.id) }}"
-                       class="btn btn-secondary btn-sm">Ver</a>
-                    <a href="{{ url_for('socios.socio_editar', socio_id=s.id) }}"
-                       class="btn btn-secondary btn-sm">Editar</a>
-                    {% if s.estado == 'activo' %}
-                    <a href="{{ url_for('socios.socio_baja', socio_id=s.id) }}"
-                       class="btn btn-sm btn-danger">Baja</a>
-                    {% endif %}
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p style="color: var(--color-text-muted);">No hay socios en este estado.</p>
-{% endif %}
+<!-- Filtros -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="btn-group" role="group">
+            <a href="{{ url_for('socios.lista', estado='activo') }}"
+               class="btn btn-outline-primary {% if estado == 'activo' %}active{% endif %}">
+                <i class="fas fa-user-check me-1"></i> Activos
+            </a>
+            <a href="{{ url_for('socios.lista', estado='baja') }}"
+               class="btn btn-outline-primary {% if estado == 'baja' %}active{% endif %}">
+                <i class="fas fa-user-slash me-1"></i> Bajas
+            </a>
+            <a href="{{ url_for('socios.lista', estado='todos') }}"
+               class="btn btn-outline-primary {% if estado == 'todos' %}active{% endif %}">
+                <i class="fas fa-list me-1"></i> Todos
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Listado -->
+<div class="card">
+    <div class="card-body p-0">
+        {% if socios %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Nº Socio</th>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Fecha alta</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in socios %}
+                    <tr>
+                        <td><span class="fw-medium">{{ s.numero_socio }}</span></td>
+                        <td>{{ s.nombre_completo }}</td>
+                        <td>{{ s.tipo_socio.nombre }}</td>
+                        <td>{{ s.fecha_alta.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            {% if s.estado == 'activo' %}
+                                <span class="badge bg-subccess">Activo</span>
+                            {% elif s.estado == 'baja' %}
+                                <span class="badge bg-danger">Baja</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">{{ s.estado|capitalize }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('socios.socio_detalle', socio_id=s.id) }}"
+                                   class="btn btn-sm btn-outline-primary" title="Vere">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ url_for('socios.socio_editar', socio_id=s.id) }}"
+                                   class="btn btn-sm btn-outline-secondary" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {% if s.estado == 'activo' %}
+                                <a href="{{ url_for('socios.socio_baja', socio_id=s.id) }}"
+                                   class="btn btn-sm btn-outline-danger" title="Dar de baja">
+                                    <i class="fas fa-user-slash"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-users"></i>
+            <p>No hay socios en este estado.</p>
+            <a href="{{ url_for('socios.socio_nuevo') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Crear primer socio
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

@@ -2,72 +2,101 @@
 {% block title %}{{ titulo }} - GestMusica{% endblock %}
 
 {% block content %}
-<div class="form-card" style="max-width: 720px;">
-    <h2>{{ titulo }}</h2>
-    <form method="POST" novalidate>
-        {{ persona_form.hidden_tag() }}
-        {{ socio_form.hidden_tag() }}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">{{ titulo }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" novalidate>
+                    {{ persona_form.hidden_tag() }}
+                    {{ socio_form.hidden_tag() }}
 
-        <div class="seccion">Datos personales</div>
-        <div class="form-grid">
-            <div class="form-group">
-                {{ persona_form.nombre.label }}
-                {{ persona_form.nombre() }}
-                {% for e in persona_form.nombre.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
-            </div>
-            <div class="form-group">
-                {{ persona_form.apellidos.label }}
-                {{ persona_form.apellidos() }}
-                {% for e in persona_form.apellidos.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
-            </div>
-            <div class="form-group">
-                {{ persona_form.fecha_nacimiento.label }}
-                {{ persona_form.fecha_nacimiento() }}
-            </div>
-            <div class="form-group">
-                {{ persona_form.email.label }}
-                {{ persona_form.email() }}
-                {% for e in persona_form.email.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
-            </div>
-            <div class="form-group">
-                {{ persona_form.telefono.label }}
-                {{ persona_form.telefono() }}
+                    <h5 class="mb-3 text-primary">
+                        <i class="fas fa-id-card me-2"></i> Datos personales
+                    </h5>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">{{ persona_form.nombre.label.text }}</label>
+                            {{ persona_form.nombre(class='form-control') }}
+                            {% for e in persona_form.nombre.errors %}
+                                <div class="invalid-feedback d-block">{{ e }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ persona_form.apellidos.label.text }}</label>
+                            {{ persona_form.apellidos(class='form-control') }}
+                            {% for e in persona_form.apellidos.errors %}
+                                <div class="invalid-feedback d-block">{{ e }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ persona_form.email.label.text }}</label>
+                            {{ persona_form.email(class='form-control') }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ persona_form.telefono.label.text }}</label>
+                            {{ persona_form.telefono(class='form-control') }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ persona_form.fecha_nacimiento.label.text }}</label>
+                            {{ persona_form.fecha_nacimiento(class='form-control') }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ persona_form.dni.label.text }}</label>
+                            {{ persona_form.dni(class='form-control') }}
+                        </div>
+                    </div>
+
+                    <h5 class="mb-3 text-primary">
+                        <i class="fas fa-user-tag me-2"></i> Datos de socio
+                    </h5>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">{{ socio_form.numero_socio.label.text }}</label>
+                            {{ socio_form.numero_socio(class='form-control') }}
+                            {% for e in socio_form.numero_socio.errors %}
+                                <div class="invalid-feedback d-block">{{ e }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ socio_form.tipo_socio_id.label.text }}</label>
+                            {{ socio_form.tipo_socio_id(class='form-select') }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ socio_form.fecha_alta.label.text }}</label>
+                            {{ socio_form.fecha_alta(class='form-control', type='date') }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ socio_form.estado.label.text }}</label>
+                            {{ socio_form.estado(class='form-select') }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ socio_form.unidad_familiar_id.label.text }}</label>
+                            {{ socio_form.unidad_familiar_id(class='form-select') }}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mt-4">
+                                {{ socio_form.es_titular_familiar(class='form-check-input') }}
+                                <label class="form-check-label">
+                                    {{ socio_form.es_titular_familiar.label.text }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        {{ socio_form.submit(class='btn btn-primary') }}
+                        <a href="{{ url_for('socios.lista') }}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
-
-        <div class="seccion">Datos de socio</div>
-        <div class="form-grid">
-            <div class="form-group">
-                {{ socio_form.numero_socio.label }}
-                {{ socio_form.numero_socio() }}
-                {% for e in socio_form.numero_socio.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
-            </div>
-            <div class="form-group">
-                {{ socio_form.tipo_socio_id.label }}
-                {{ socio_form.tipo_socio_id() }}
-            </div>
-            <div class="form-group">
-                {{ socio_form.fecha_alta.label }}
-                {{ socio_form.fecha_alta() }}
-            </div>
-            <div class="form-group">
-                {{ socio_form.estado.label }}
-                {{ socio_form.estado() }}
-            </div>
-            <div class="form-group">
-                {{ socio_form.unidad_familiar_id.label }}
-                {{ socio_form.unidad_familiar_id() }}
-            </div>
-            <div class="form-group checkbox" style="align-self: end; padding-bottom: 1.25rem;">
-                {{ socio_form.es_titular_familiar() }}
-                {{ socio_form.es_titular_familiar.label }}
-            </div>
-        </div>
-
-        <div class="form-actions">
-            {{ socio_form.submit(class='btn btn-primary') }}
-            <a href="{{ url_for('socios.lista') }}" class="btn btn-secondary">Cancelar</a>
-        </div>
-    </form>
+    </div>
 </div>
 {% endblock %}

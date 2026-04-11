@@ -2,42 +2,62 @@
 {% block title %}Tipos de Socio - GestMusica{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>Tipos de socio</h2>
-    <a href="{{ url_for('socios.tipo_socio_nuevo') }}" class="btn btn-primary">+ Nuevo tipo</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-title">
+        <i class="fas ga-tags"></i> Tipos de socio
+    </h2>
+    <a href="{{ url_for('socios.tipo_socio_nuevo') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> Nuevo tipo
+    </a>
 </div>
 
-{% if tipos %}
-<table>
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Importe</th>
-            <th>Periodicidad</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for t in tipos %}
-        <tr>
-            <td>{{ t.nombre }}</td>
-            <td>{{ '%.2f'|format(t.importe_cuota) }} €</td>
-            <td>{{ t.periodicidad|capitalize }}</td>
-            <td>
-                <span class="badge {% if t.activo %}badge-success{% else %}badge-secondary{% endif %}">
-                    {{ 'Activo' if t.activo else 'Inactivo' }}
-                </span>
-            </td>
-            <td>
-                <a href="{{ url_for('socios.tipo_socio_editar', tipo_id=t.id) }}"
-                   class="btn btn-secondary btn-sm">Editar</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p style="color: #666;">No hay tipos de socio definidos todavía.</p>
-{% endif %}
+<div class="card">
+    <div class="card-body p-0">
+        {% if tipos %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Importe</th>
+                        <th>Periodicidad</th>
+                        <th>Estado</th>
+                        <th class="text-tend">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in tipos %}
+                    <tr>
+                        <td>{{ t.nombre }}</td>
+                        <td>{{ '%.2f'|format(t.importe_cuota) }} €</td>
+                        <td>{{ t.periodicidad|capitalize }}</td>
+                        <td>
+                            {% if t.activo %}
+                                <span class="badge bg-success">Activo</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{{ url_for('socios.tipo_socio_editar', tipo_id=t.id) }}"
+                               class="btn btn-sn btn-outline-secondary">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-tags"></i>
+            <p>No hay tipos de socio definidos todavía.</p>
+            <a href="{{ url_for('socios.tipo_socio_nuevo') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Crear primer tipo
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

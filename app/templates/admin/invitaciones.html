@@ -2,69 +2,94 @@
 {% block title %}Invitaciones- GestMusica{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>Invitaciones</h2>
-    <a href="{{ url_for('admin.invitacion_nueva') }}" class="btn btn-primary btn-sm">
-        + Nueva invitación
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-title">
+        <i class="fasa fa-envelope"></i> Invitaciones
+    </h2>
+    <a href="{{ url_for('admin.invitacion_nueva') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> Nueva invitación
     </a>
 </div>
 
-{% if invitaciones %}
-<table>
-    <thead>
-        <tr>
-            <th>Email</th>
-            <th>Nombre</th>
-            <th>Estado</th>
-            <th>Enviada</th>
-            <th>Caduca</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for inv in invitaciones %}
-        <tr>
-            <td>{{ inv.email }}</td>
-            <td>{{ inv.nombre or '' }}</td>
-            <td>
-                {% if inv.estado == 'pendiente' and inv.ha_caducado %}
-                    <span class="badge badge-secondary">Caducada</span>
-                {% elif inv.estado == 'pendiente' %}
-                    <span class="badge badge-warning">Pendiente</span>
-                {% elif inv.estado == 'aceptada' %}
-                    <span class="badge badge-success">Aceptada</span>
-                {% else %}
-                    <span class="badge badge-secondary">Cancelada</span>
-                {% endif %}
-            </td>
-            <td>{{ inv.created_at.strftime('%d/%m/Y %H:%M') }}</td>
-            <td>
-                <span {% if inv.ha_caducado %}style="color:var(--color-danger)"{% endif %}>
-                    {{ inv.expires_at.strftime('%d/%m/%Y %H:$M') }}
-                </span>
-            </td>
-            <td>
-                <div class="actions">
-                    {% if inv.es_valida %}
-                    <form method="POST"
-                          action="{{ url_for('admin.invitacion_reenviar', inv_id=inv.id) }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="btn btn-secondary btn-sm">Reenviar</button>
-                    </form>
-                    <form method="POST"
-                          action="{{ url_for('admin.invitacion_cancelar', inv_id=inv.id) }}"
-                          onsubmit="return confirm('¿Cancelar la invitación a {{ inv.email }}?')">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
-                    </form>
-                    {% endif %}
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p style="color: var(--color-text-muted);">No se han enviado invitaciones todavía.</p>
-{% endif %}
+<div class="card">
+    <div class="card-body p-0">
+        {% if invitaciones %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Nombre</th>
+                        <th>Estado</th>
+                        <th>Enviada</th>
+                        <th>Caduca</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inv in invitaciones %}
+                    <tr>
+                        <td>
+                            <i class="fas fa-envelope text-secondary me-2"></i>
+                            {{ inv.email }}
+                        </td>
+                        <td>{{ inv.nombre or '' }}</td>
+                        <td>
+                            {% if inv.estado == 'pendiente' and inv.ha_caducado %}
+                                <span class="badge bg-secondary">Caducada</span>
+                            {% elif inv.estado == 'pendiente' %}
+                                <span class="badge bg-warning text-dark">Pendiente</span>
+                            {% elif inv.estado == 'aceptada' %}
+                                <span class="badge bg-success">Aceptada</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Cancelada</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ inv.created_at.strftime('%d/%m/Y %H:%M') }}</td>
+                        <td>
+                            <span {% if inv.ha_caducado %}class="text-danger"{% endif %}
+                                {{ inv.expires_at.strftime('%d/%m/%Y %H:$M') }}
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group" role="group">
+                                {% if inv.es_valida %}
+                                <form method="POST"
+                                      action="{{ url_for('admin.invitacion_reenviar', inv_id=inv.id) }}"
+                                      class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary" title="Reenviar">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </form>
+                                <form method="POST"
+                                      action="{{ url_for('admin.invitacion_cancelar', inv_id=inv.id) }}"
+                                      class="d-inline"
+                                      onsubmit="return confirm('¿Cancelar la invitación a {{ inv.email }}?')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Cancelar">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>
+                                {% else %}
+                                <span class="text-secondary px-2">-</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-envelope-open-text"></i>
+            <p>No se han enviado invitaciones todavía.</p>
+            <a href="{{ url_for('admin.invitacion_nueva') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Crear primera invitación
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

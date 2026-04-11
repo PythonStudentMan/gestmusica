@@ -1,47 +1,125 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf_token" content="{{ csrf_token() }}">
     <title>{% block title %}GestMusica{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="httos://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Estilos personalizados -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/gestmusica.css') }}">
 
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     {% if g.user %}
-    <nav>
-        <a href="{{ url_for('auth.dashboard') }}" class="brand">
-            GestMusica - {{ session.get('tenant_nombre', '') }}
-        </a>
-        <div class="nav-right">
-            {% if g.user and g.user.identity.is_root %}
-            <a href="{{ url_for('root.dashboard') }}" style="color: #ffd700;">Root</a>
-            {% endif %}
+    <!-- Navbar Bootstrap -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--gm-primary);">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('auth.dashboard') }}">
+                <i class="fas fa-music me-2"></i>
+                GestMusica - {{ session.get('tenant_nombre', '') }}
+            </a>
 
-            {% if g.user.tiene_permiso('socios.ver') %}
-            <a href="{{ url_for('socios.index') }}">Socios</a>
-            {% endif %}
-            {% if g.user.tiene_permiso('admin.usuarios') or g.user.tiene_permiso('admin.roles') %}
-            <a href="{{ url_for('admin.usuarios') }}">Usuarios</a>
-            <a href="{{ url_for('admin.invitaciones') }}">Invitaciones</a>
-            <a href="{{ url_for('admin.roles') }}">Roles</a>
-            {% endif %}
-            <span>{{ g.user.nombre }}</span>
-            <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if g.user.tiene_permiso('socios.ver') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('socios.index') }}">
+                            <i class="fas fa-users me-1"></i> Socios
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if g.user.tiene_permiso('musicos.ver_todos') or g.user.tiene_permiso('musicos.ver_propio') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('musicos.index') }}">
+                            <i class="fas fa-guitar me-1"></i> Músicos
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if g.user.tiene_permiso('admin.usuarios') or g.user.tiene_permiso('admin.roles') %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog me-1"></i> Admin
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="url_for('admin.usuarios') }}">
+                                <i class="fas fa-user me-2"></i>Usuarios
+                            </a></li>
+                            <li><a class=dropdown-item" href="{{ url_for('admin.invitaciones') }}">
+                                <i class="fas fa-envelope me-2"></i>Invitaciones
+                            </a></li>
+                            <li><a class=dropdown-item" href="{{ url_for('admin.roles') }}">
+                                <i class="fas fa-tag me-2"></i>Roles
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class=dropdown-item" href="{{ url_for('admin.subagrupaciones') }}">
+                                <i class="fas fa-layer-group me-2"></i>Secciones
+                            </a></li>
+                            <li><a class=dropdown-item" href="{{ url_for('admin.instrumentos') }}">
+                                <i class="fas fa-drum me-2"></i>Instrumentos
+                            </a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+
+                    {% if g.user.identity.is_root %}
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" href="{{ url_for('root.dashboard') }}">
+                            <i class="fas fa-crown me-1"></i> Root
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i> {{ g.user.nombre }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-user me-2"></i>Mi perfil
+                            </a></li>
+                            <li><hr class="drowpdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
     {% endif %}
 
-    <div class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
-            {% endfor %}
-        {% endwith %}
+    <!-- Contenido principal -->
+    <main class="py-4">
+        <div class="container-fluid px-3 px-md-4 py-4">
+            {% include 'components/flash_messages.html' %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
 
-        {% block content %}{% endblock %}
-    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

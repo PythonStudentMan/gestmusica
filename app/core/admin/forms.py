@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-    StringField, PasswordField, BooleanField,
+    StringField, PasswordField, BooleanField, TextAreaField,
     SelectMultipleField, SelectField, SubmitField,
 )
 from wtforms.validators import DataRequired, Email, Length, Optional
@@ -11,14 +11,21 @@ PERMISOS_DISPONIBLES = [
     ('socios.crear', 'Socios - Crear'),
     ('socios.editar', 'Socios - Editar'),
     ('socios.eliminar', 'Socios - Eliminar'),
-    ('musicos.ver', 'Músicos - Ver'),
+
+    ('musicos.ver_propio', 'Músicos - Ver ficha propia'),
+    ('musicos.editar_propio', 'Músicos - Editar ficha propia'),
+    ('musicos.ver_seccion', 'Músicos - Ver sección'),
+    ('musicos.ver_todos', 'Músivos - Ver todos'),
     ('musicos.crear', 'Músicos - Crear'),
     ('musicos.editar', 'Músicos - Editar'),
-    ('musicos.eliminar', 'Músicos - Eliminar'),
+    ('musicos.baja', 'Músicos - Dar de baja'),
+    ('musicos.asignar', 'Músicos - Asignar a subagrupaciones'),
+
     ('eventos.ver', 'Eventos - Ver'),
     ('eventos.crear', 'Eventos - Crear'),
     ('eventos.editar', 'Eventos - Editar'),
     ('eventos.eliminar', 'Eventos - Eliminar'),
+
     ('admin.usuarios', 'Admin - Gestión de usuarios'),
     ('admin.roles', 'Admin - Gestión de roles'),
 ]
@@ -86,3 +93,32 @@ class InvitacionForm(FlaskForm):
         description='Nombre sugerido. El usuario podrá cambiarlo al activar su cuenta.',
     )
     submit = SubmitField('Enviar invitación')
+
+
+
+class SubagrupacionForm(FlaskForm):
+    nombre = StringField('Nombre', validators=[DataRequired(), Length(max=255)])
+    descripcion = TextAreaField('Descripcion', validators=[Optional()])
+    activa = BooleanField('Activa', default=True)
+    submit = SubmitField('Guardar')
+
+
+class InstrumentoForm(FlaskForm):
+
+    FAMILIAS = [
+        ('', 'Sin clasificar'),
+        ('direccion', 'Dirección Musical'),
+        ('viento_madera', 'Viento Madera'),
+        ('viento_metal', 'Viento Metal'),
+        ('percusion', 'Percusión'),
+        ('cuerda_frotada', 'Cuerda Frotada'),
+        ('cuerda_pulsada', 'Cuerda Pulsada'),
+        ('teclado', 'Teclado'),
+        ('voz', 'Voz'),
+        ('electronico', 'Electrónico'),
+    ]
+
+    nombre = StringField('Nombre', validators=[DataRequired(), Length(max=64)])
+    familia = SelectField('Familia', choices=FAMILIAS, validators=[Optional()])
+    activo = BooleanField('Activo', default=True)
+    submit = SubmitField('Guardar')

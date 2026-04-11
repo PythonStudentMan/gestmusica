@@ -2,39 +2,76 @@
 {% block title %}Registrar cobro - GestMusica{% endblock %}
 
 {% block content %}
-<div class="form-card" style="max-width: 600px;">
-    <h2>Registrar cobro</h2>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-hand-holding-usd me-2"></i>
+                    Registrar cobro
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- Info del recibo -->
+                <div class="bg-light p-3 rounded mb-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-secondary">Recibo</small>
+                            <p class="fw-bold mb-2">{{ recibo.numero_recibo }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-secondary">Socio</small>
+                            <p class="fw-bold mb-2">{{ recibo.socio.nombre_completo }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-secondary">Cuota</small>
+                            <p class="mb-2">{{ recibo.cuota.descripcion }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-secondary">Importe</small>
+                            <p class="fw-bold text-primary">{{ '%.2f'|format(recibo.importe) }} €</p>
+                        </div>
+                    </div>
+                </div>
 
-    <div class="info-recibo">
-        <div class="fila"><span>Recibo</span><span>{{ recibo.numero_recibo }}</span></div>
-        <div class="fila"><span>Socio</span><span>{{ recibo.socio.nombre_completo }}</span></div>
-        <div class="fila"><span>Cuota</span><span>{{ recibo.cuota.descripcion }}</span></div>
-        <div class="fila"><span>Importe</span><span>{{ '%.2f'|format(recibo.importe) }} €</span></div>
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form.fecha_pago.label(class='form-label') }}
+                            {{ form.fecha_pago(class='form-control', type='date') }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.metodo_pago.label(class='form-label') }}
+                            {{ form.metodo_pago(class='form-select') }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.descuento.label(class='form-label' }}
+                            {{ form.descuento(class='form-control') }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.motivo_descuento.label(class='form-label') }}
+                            {{ form.motivo_descuento(class='form-control') }}
+                            {% for e in form.motivo_descuento.errors %}
+                                <div class="invalid-feedback d-block">{{ e }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-12">
+                            {{ form.notas.label(class='form-label') }}
+                            {{ form.notas(class='form-control', rows=2) }}
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        {{ form.submit(class='btn btn-success') }}
+                        <a href="{{ url_for('socios.recibos') }}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-
-    <form method="POST" novalidate>
-        {{ form.hidden_tag() }}
-        <div class="form-grid">
-            <div class="form-group">
-                {{ form.fecha_pago.label }} {{ form.fecha_pago() }}
-            </div>
-            <div class="form-group">
-                {{ form.metodo_pago.label }} {{ form.metodo_pago() }}
-            </div>
-            <div class="form-group">
-                {{ form.descuento.label }} {{ form.descuento() }}
-            </div>
-            <div class="form-group">
-                {{ form.motivo_descuento.label }} {{ form.motivo_descuento() }}
-            </div>
-        </div>
-        <div class="form-group">
-            {{ form.notas.label }} {{ form.notas(rows=2) }}
-        </div>
-        <div class="form-actions">
-            {{ form.submit(class='btn btn-primary') }}
-            <a href="{{ url_for('socios.recibos') }}" class="btn btn-secondary">Cancelar</a>
-        </div>
-    </form>
 </div>
 {% endblock %}

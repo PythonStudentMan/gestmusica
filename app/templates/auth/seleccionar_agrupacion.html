@@ -1,105 +1,45 @@
 {% extends 'base.html' %}
 {% block title %}Seleccionar agrupación - GestMusica{% endblock %}
 
-{% block extra_css %}
-<style>
-  .selector-wrap {
-    min-height: calc(100vh - 52px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .selector-card {
-    background: #fff;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: 2.5rem 2rem;
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .selector-card h1 {
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-    color: var(--color-primary);
-  }
-
-  .selector-card .subtitle {
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-    margin-bottom: 2rem;
-  }
-
-  .agrupacion-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .agrupacion-btn {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.25rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: #fff;
-    cursor: pointer;
-    text-align: left;
-    font-family: var(--font);
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--color-primary);
-    transition: border-color 0.15s, background 0.15s;
-    width: 100%;
-  }
-
-  .agrupacion-btn:hover {
-    border-color: var(--color-primary);
-    background: #f5f5fa;
-  }
-
-  .agrupacion-btn .arrow {
-    font-size: 1.1rem;
-    opacity: 0.4;
-  }
-
-  .volver {
-    display: block;
-    text-align: center;
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-    text-decoration: none;
-    margin-top: 0.5rem;
-  }
-
-  .volver:hover { color: var(--color-primary); }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="selector-wrap">
-  <div class="selector-card">
-    <h1>Selecciona una agrupación</h1>
-    <p class="subtitle">Hola, {{ identity.nombre }}. ¿Con qué agrupación quieres entrar?</p>
+<div class="container">
+  <div class="row justify-content-center align-items-center min-vh-100">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+      <div class="card shadow-lg border-0">
+        <div class="card-body p-4 p-md-5">
+          <div class="text-center mb-4">
+            <i class="fas fa-building fa-3x text-primary mb-3"></i>
+            <h3 class="fw-bold">Selecciona una agrupación</h3>
+            <p class="text-secondary">Hola, {{ identity.nombre }}. Elige con qué agrupación quieres entrar.</p>
+          </div>
 
-    <form method="POST" novalidate>
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <div class="agrupacion-list">
-        {% for m in memberships %}
-        <button type="submit" name="tenant_id" value="{{ m.tenant_id }}"
-                class="agrupacion-btn">
-          <span>{{ m.tenant.nombre }}</span>
-          <span class="arrow">-></span>
-        </button>
-        {% endfor %}
+          <form method="POST" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="d-grip gap-3">
+              {% for m in memberships %}
+              <button type="submit" name="tenant_id" value="{{ m.tenant_id }}"
+                      class="btn btn-outline-primary text-start p-3 hover-lift">
+                <div class="d-flex align-items-center justify-content-between">
+                  <span>
+                    <i class="fas fa-users me-2"></i>
+                    <strong>{{ m.tenant.nombre }}</strong>
+                  </span>
+                  <i class="fas fa-chevron-right"></i>
+                </div>
+              </button>
+              {% endfor %}
+            </div>
+          </form>
+
+          <div class="text-center mt-4">
+            <a href="{{ url_for('auth.logout') }}" class="text-secondary">
+              <i class="fas fa-arrow-left me-1"></i> Volver al inicio de sesión
+            </a>
+          </div>
+        </div>
       </div>
-    </form>
-
-    <a href="{{ url_for('auth.logout') }}" class="volver"><- Volver al inicio de sesión</a>
+    </div>
   </div>
 </div>
 {% endblock %}

@@ -1,44 +1,48 @@
 {% extends 'base.html' %}
 {% block title %}{{ titulo }} - GestMusica{% endblock %}
 
-{% block extra_css %}
-<style>
-    .permisos-grid { display: grid; grid-template-columns: 1fr 1fr;
-                     gap: 0.5rem; margin-top: 0.5rem; }
-    .permiso-item { display: flex; align-items: center; gap: 0.5rem;
-                    font-size: 0.875rem; color: #333; }
-    .permiso-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="form-card">
-    <h2>{{ titulo }}</h2>
-    <form method="POST" novalidate>
-        {{ form.hidden_tag() }}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">{{ titulo }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
 
-        <div class="form-group">
-            {{ form.nombre.label }}
-            {{ form.nombre() }}
-            {% for e in form.nombre.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
-        </div>
+                    <div class="mb-3">
+                        {{ form.nombre.label(class='form-label') }}
+                        {{ form.nombre(class='form-control') }}
+                        {% for e in form.nombre.errors %}
+                            <div class="invalid-feedback d-block">{{ e }}</div>
+                        {% endfor %}
+                    </div>
 
-        <div class="form-group">
-            <label>Permisos</label>
-            <div class="permisos-grid">
-                {% for subfield in form.permisos %}
-                <div class="permiso-item">
-                    {{ subfield() }}
-                    {{ subfield.label }}
-                </div>
-                {% endfor %}
+                    <div class="mb-3">
+                        <label class="form-label">Permisos</label>
+                        <div class="row g-2">
+                            {% for subfield in form.permisos %}
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    {{ subfield(class='form-check-input') }}
+                                    {{ subfield.label(class='form-check-label small' }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        {{ form.submit(class='btn btn-primary') }}
+                        <a href="{{ url_for('admin.roles') }}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
-
-        <div class="form-actions">
-            {{ form.submit(class='btn btn-primary') }}
-            <a href="{{ url_for('admin.roles') }}" class="btn btn-secondary">Cancelar</a>
-        </div>
-    </form>
+    </div>
 </div>
 {% endblock %}

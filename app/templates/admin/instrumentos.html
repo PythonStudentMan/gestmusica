@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Instrumentos - GestMusica {% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-title">
+        <i class="fas fa-drum"></i> Catálogo de Instrumentos que utiliza la agrupación
+    </h2>
+    <a href="{{ url_for('admin.instrumento_nuevo') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> Nuevo instrumento
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        {% if instrumentos %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Familia</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in instrumentos %}
+                    <tr>
+                        <td>
+                            <i class="fas fa-music text-primary me-2"></i>
+                            {{ i.nombre }}
+                        </td>
+                        <td>
+                            {% if i.familia %}
+                                {% set familias = {
+                                    'viento_madera': 'Viento Madera',
+                                    'viento_metal': 'Viento Metal',
+                                    'percusion': 'Percusión',
+                                    'cuerda_frotada': 'Cuerda Frotada',
+                                    'cuerda_pulsada': 'Cuerda Pulsada',
+                                    'teclado': 'Teclado',
+                                    'electronico': 'Electrónico',
+                                } %}
+                                <span class="badge bg-light txt-dark">
+                                    {{ familias.get(i.familia, i.familia) }}
+                                </span>
+                            {% else %}
+                                <span class="text-secondary">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if i.activo %}
+                                <span class="badge bg-success">Activo</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('admin.instrumento_editar', inst_id=i.id) }}"
+                                   class="btn btn-sm btn-outline-secondary" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form method="POST"
+                                      action="{{ url_for('admin.instrumento_toggle', inst_id=i.id) }}"
+                                      class="d-inline"
+                                      onsubmit="return confirm('¿Cambiar estado de {{ i.nombre }}?')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm {% if i.activo %}btn-outline-danger{% else %}btn-outline-success{% endif %}"
+                                            title="{{ 'Desactivar' if i.activo else 'Activar' }}">
+                                        <i class="fas {% if i.activo %}fa-ban{% else %}fa-check{% endif %}"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-drum"></i>
+            <p>No hay instrumentos definidos todavía.</p>
+            <a href="{{ url_for('admin.instrumento_nuevo') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Crear primer instrumento
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

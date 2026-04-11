@@ -13,36 +13,29 @@
           {{ form.hidden_tag() }}
 
           <div class="mb-3">
-            {{ form.nombre.label(class='form-label') }}
-            {{ form.nombre(class='form-control', placeholder='Banda Sinfónica de...') }}
+            {{ form.nombre.label(class='form-label' }}
+            {{ form.nombre(class='form-control', placeholder='Flauta, Clarinete, Trompeta...') }}
             {% for e in form.nombre.errors %}
               <div class="invalid-feedback d-block">{{ e }}</div>
             {% endfor %}
           </div>
 
           <div class="mb-3">
-            {{ form.slug.label(class='form-label') }}
-            {{ form.slug(class='form-control', placeholder='banda-sinfonica') }}
-            <small class="form-text text-secondary">{{ form.slug.description }}</small>
-            {% for e in form.slug.errors %}
+            {{ form.familia.label(class='form-label' }}
+            {{ form.familia(class='form-select') }}
+            {% for e in form.familia.errors %}
               <div class="invalid-feedback d-block">{{ e }}</div>
             {% endfor %}
           </div>
 
-          <div class="mb-3">
-            {{ form.modo.label(class='form-label') }}
-            {{ form.modo(class='form-control') }}
-            <small class="form-text text-secondary">{{ form.modo.description }}</small>
-          </div>
-
           <div class="mb-3 form-check">
             {{ form.activo(class='form-check-input') }}
-            {{ form.activo.label(class='form-check-label') }}
+            {{ form.activo.label(class='form-check-label' }}
           </div>
 
           <div class="d-flex gap-2">
             {{ form.submit(class='btn btn-primary') }}
-            <a href="{{ url_for('root.tenants') }}" class="btn btn-outline-secondary">
+            <a href="{{ url_for('admin.instrumentos') }}" class="btn btn-outline-secondary">
               Cancelar
             </a>
           </div>

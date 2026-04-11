@@ -2,59 +2,104 @@
 {% block title %}Usuarios - GestMusica{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>Usuarios</h2>
-    <a href="{{ url_for('admin.usuario_nuevo') }}" class="btn btn-sm btn-primary">+ Nuevo usuario</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-title">
+        <i class="fas fa-users"></i>Usuarios
+    </h2>
+    <a href="{{ url_for('admin.usuario_nuevo') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> Nuevo usuario
+    </a>
 </div>
 
-{% if usuarios %}
-<table>
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Estado</th>
-            <th>Último acceso</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for u in usuarios %}
-        <tr>
-            <td>{{ u.nombre }} {% if u.apellidos %}{{ u.apellidos }}{% endif %}</td>
-            <td>{{ u.email }}</td>
-            <td>
-                <span class="badge {% if u.activo %}badge-success{% else %}badge-danger{% endif %}">
-                    {{ 'Activo' if u.activo else 'Inactivo' }}
-                </span>
-            </td>
-            <td>{{ u.last_login.strftime('%d/%m/%Y %H:%M') if u.last_login else '-' }}</td>
-            <td>
-                <div class="actions">
-                    <a href="{{ url_for('admin.usuario_editar', member_id=u.id) }}"
-                       class="btn btn-secondary btn-sm">Editar</a>
-                    <a href="{{ url_for('admin.usuario_roles', member_id=u.id) }}"
-                       class="btn btn-secondary btn-sm">Roles</a>
-                     <a href="{{ url_for('admin.usuario_permisos', member_id=u.id) }}"
-                       class="btn btn-secondary btn-sm">Permisos</a>
-                    {% if u.id != g.user.id %}
-                    <form method="POST"
-                          action="{{ url_for('admin.usuario_desactivar', member_id=u.id|string) }}"
-                          style="display:inline">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="btn btn-sm
-                            {% if u.activo %}btn-danger{% else %}btn-primary{% endif %}">
-                            {{ 'Desactivar' if u.activo else 'Activar' }}
-                        </button>
-                    </form>
-                    {% endif %}
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p style="color: var(--colortext-muted);">No hay usuarios en esta agrupación todavía.</p>
-{% endif %}
+<div class="card">
+    <div class="card-body p-o">
+        {% if usuarios %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Estado</th>
+                        <th>Roles</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in usuarios %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-light p-2 me-2">
+                                    <i class="fas fa-user text-secondary"></i>
+                                </div>
+                                {{ u.nombre }} {{ u.apellidos or '' }}
+                            </div>
+                        </td>
+                        <td>{{ u.email }}</td>
+                        <td>
+                            {% if u.activo %}
+                                <span class="badge bg-success">Activo</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% set roles = u.member_roles.all() %}
+                            {% if roles %}
+                                {% for mr in roles[:2] %}
+                                    <span class="badge bg-info text-dark me-1">{{ mr.role.nombre }}</span>
+                                {% endfor %}
+                                {% if roles|length > 2 %}
+                                    <span class="badge bg-secondary">+{{ roles|length - 2 }}</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-secondary">Sin roles</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('admin.usuario_editar', member_id=u.id) }}"
+                                   class="btn btn-sm btn-outline-secondary" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ url_for('admin.usuario_roles', member_id=u.id) }}"
+                                   class="btn btn-sm btn-outline-info" title="Roles">
+                                    <i class="fas fa-tag"></i>
+                                </a>
+                                <a href="{{ url_for('admin.usuario_permisos', member_id=u.id) }}"
+                                   class="btn btn-sm btn-outline-warning" title="Permisos extra">
+                                    <i class="fas fa-key"></i>
+                                </a>
+                                {% if u.id != g.user.id %}
+                                <form method="POST"
+                                      action="{{ url_for('admin.usuario_desactivar', member_id=u.id) }}"
+                                      class="d-inline"
+                                      onsubmit="return confirm('¿Cambiar estado de {{ u.nombre }}?')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit"
+                                            class="btn btn-sm {% if u.activo %}btn-outline-danger{% else %}btn-outline-success{% endif %}"
+                                            title="{{ 'Desactivar' if u.activo else 'Activar' }}">
+                                        <i class="fas {% if u.activo %}fa-user-slash{% else %}fa-user-check{% endif %}"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-users"></i>
+            <p>No hay usuarios en esta agrupación todavía.</p>
+            <a href="{{ url_for('admin.usuario_nuevo') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Crear primer usuario
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

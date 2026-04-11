@@ -1,104 +1,146 @@
 {% extends 'base.html' %}
 {% block title %}Panel Root - GestMusica{% endblock %}
 
-{% block extra_css %}
-<style>
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr);
-        gap: 1.5rem;
-        margin-bottom: 2.5rem;
-    }
-    .stat-card {
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
-        padding: 1.5rem;
-        text-align: center;
-    }
-    .stat-number {
-        font-size: 2.2rem;
-        font-weight: 600;
-        color: var(--color-primary);
-    }
-    .stat-label {
-        font-size: 0.9rem;
-        color: var(--color-text-muted);
-        margin-top: 0.25rem;
-    }
-    .quick-actions {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<h2 style="margin-botton: 1.5rem; font-size: 1.5rem; font-weight: 600; color: var(--color-primary);">
-    Panel de Superaministración
-</h2>
-
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-number">{{ total_tenants }}</div>
-        <div class="stat-label">Total agrupaciones</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-number">{{ tenants_activos }}</div>
-        <div class="stat-label">Agrupaciones activas</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-number">{{ total_usuarios }}</div>
-        <div class="stat-label">Usuarios totales</div>
-    </div>
+<div class="mb-4">
+    <h2 class=page-title">
+        <i class="fas fa-crown text-warning"></i>
+        Panel de Superaministración
+    </h2>
+    <p class="text-secondary">Gestión global de agrupaciones y usuarios.</p>
 </div>
 
-<div class="quick-actions">
-    <a href="{{ url_for('root.tenant_nuevo') }}" class="btn btn-primary">+ Nueva agrupación</a>
-    <a href="{{ url_for('root.tenants') }}" class="btn btn-secondary">Ver todas las agrupaciones</a>
-</div>
-
-<div class="card">
-    <h3>Agrupaciones recientes</h3>
-    {% if tenants %}
-    <table>
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Slug</th>
-                <th>Modo</th>
-                <th>Estado</th>
-                <th>Creada</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for t in tenants %}
-            <tr>
-                <td>{{ t.nombre }}</td>
-                <td>{{ t.slug }}</td>
-                <td>{{ t.modo }}</td>
-                <td>
-                    <span class="badge {% if t.activo %}badge-success{% else %}badge-danger{% endif %}">
-                        {{ 'Activo' if t.activo else 'Inactivo' }}
-                    </span>
-                </td>
-                <td>{{ t.created_at.strftime('%d/%m/%Y') }}</td>
-                <td>
-                    <div class="actions">
-                        <a href="{{ url_for('root.tenant_entrar', tenant_id=t.id) }}"
-                           class="btn btn-sm btn-primary">Entrar</a>
-                        <a href="{{ url_for('root.tenant_editar', tenant_id=t.id) }}"
-                           class="btn btn-sm btn-secondary">Editar</a>
+<!-- Stats -->
+<div class="row g-4 mb-4">
+    <div class="col-sm-6 col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3">
+                            <i class="fas fa-building fa-2x text-primary"></i>
+                        </div>
                     </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p style="color: var(--color-text-muted);">No hay agrupaciones registradas.</p>
-    {% endif %}
+                    <div class="flex-grow-1 ms-3">
+                        <h3 class="mb-0 fw-bold">{{ total_tenants }}</h3>
+                        <p class="text-secondary mb-0">Total agrupaciones</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-3">
+                            <i class="fas fa-check-circle fa-2x text-success"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h3 class="mb-0 fw-bold">{{ tenants_activos }}</h3>
+                        <p class="text-secondary mb-0">Agrupaciones activas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-3">
+                            <i class="fas fa-users fa-2x text-info"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h3 class="mb-0 fw-bold">{{ total_usuarios }}</h3>
+                        <p class="text-secondary mb-0">Usuarios totales</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Acciones rápidas -->
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">Acciones rápidas</h5>
+        <div class="d-flex flew-wrap gap-2">
+            <a href="{{ url_for('root.tenant_nuevo') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Nueva agrupación
+            </a>
+            <a href="{{ url_for('root.tenants') }}" class="btn btn-outline-primary">
+                <i class="fas fa-list me-1"></i> Ver todas las agrupaciones
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Agrupaciones recientes -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-clock me-2"></i>
+            Agrupaciones recientes
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        {% if tenants %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Slug</th>
+                        <th>Modo</th>
+                        <th>Estado</th>
+                        <th>Creada</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in tenants %}
+                    <tr>
+                        <td>{{ t.nombre }}</td>
+                        <td>{{ t.slug }}</td>
+                        <td><span class="badge bg-light text-dark">{{ t.modo }}</span></td>
+                        <td>
+                            {% if t.activo %}
+                                <span class="badge bg-success">Activo</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ t.created_at.strftime('%d/%m/%Y') }}</td>
+                        <td class="text-end">
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('root.tenant_entrar', tenant_id=t.id) }}"
+                                   class="btn btn-sm btn-primary" title="Entrar como admin">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a>
+                                <a href="{{ url_for('root.tenant_editar', tenant_id=t.id) }}"
+                                   class="btn btn-sm btn-outline-secondary" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-building"></i>
+            <p>No hay agrupaciones registradas.</p>
+            <a href="{{ url_for('root.tenant_nuevo') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Crear primera agrupación
+            </a>
+        </div>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

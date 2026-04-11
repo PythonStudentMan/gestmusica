@@ -2,103 +2,127 @@
 {% block title %}Permisos de {{ user.nombre }} - GestMusica{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>Permisos individuales - {{ user.nombre }}</h2>
-    <a href="{{ url_for('admin.usuarios') }}" class="btn btn-secondary btn-sm">+ Volver</a>
+<div class="mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="page-title">
+            <i class="fas fa-key"></i> Permisos individuales - {{ user.nombre }}
+        </h2>
+        <a href="{{ url_for('admin.usuarios') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Volver
+        </a>
+    </div>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start;">
-    {{/* Panel izquierdo: permisos activos */}}
-    <div class="card">
-        <h3>Permisos activos</h3>
-        <p class="subtitle">
-            Permisos añadidos directamente a este usuario, sin cambiar su rol.
-            Son aditivos y se pueden revocar en cualquier momento.
-        </p>
+<div class="row g-4">
+    <!-- Permisos activos -->
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Permisos activos</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-secondary small">
+                    Permisos añadidos directamente a este usuario, sin cambiar su rol.
+                    Son aditivos y se pueden revocar en cualquier momento.
+                </p>
 
-        {% if permisos_individuales %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Permiso</th>
-                    <th>Motivo</th>
-                    <th>Fecha</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for mp in permisos_individuales %}
-                <tr>
-                    <td><span class="badge badge-accent">{{ mp.permiso }}</span></td>
-                    <td style="font-size: 0.875rem; color: var(--color-text-muted);">{{ mp.motivo }}</td>
-                    <td style="font-size: 0.825rem: color: var(--color-text-hint);">
-                        {{ mp.created_at.strftime('%d/%m/%Y') }}
-                    </td>
-                    <td>
-                        <form method="POST"
-                              action="{{ url_for('admin.usuario_permiso_revocar', member_id=user_id, permiso_id=mp.id) }}"
-                              onsubmit="return confirm('¿Revocar el permiso {{ mp.permiso }}?')">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="btn btn-danger btn-sm">Revocar</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <p style="color: var(--color-text-muted); font-size: 0.9rem;">
-            Este usuario no tiene permisos individuales asignados.
-        </p>
-        {% endif %}
+                {% if permisos_individuales %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Permiso</th>
+                                <th>Motivo</th>
+                                <th>Fecha</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for mp in permisos_individuales %}
+                            <tr>
+                                <td><span class="badge bg-warning text-dark">{{ mp.permiso }}</span></td>
+                                <td class="small text-secondary">{{ mp.motivo }}</td>
+                                <td class="small">{{ mp.created_at.strftime('%d/%m/%Y') }}</td>
+                                <td>
+                                    <form method="POST"
+                                          action="{{ url_for('admin.usuario_permiso_revocar', member_id=user_id, permiso_id=mp.id) }}"
+                                          onsubmit="return confirm('¿Revocar el permiso {{ mp.permiso }}?')">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-3">
+                    <i class="fas fa-check-circle text-success fa-2x mb-2"></i>
+                    <p class="text-secondary mb-0">Este usuario no tiene permisos individuales asignados.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
 
-    {{/* Panel derecho: añadir permiso */}}
-    <div class="card">
-        <h3>Añadir permiso temporal</h3>
-        <p class="subtitle">
-            El motivo queda registrado para auditoría.
-            El permiso puede revocarse en cualquier momento.
-        </p>
-
-        <form method="POST" novalidate>
-            {{ form.hidden_tag() }}
-
-            <div class="form-group">
-                {{ form.permiso.label }}
-                {{ form.permiso() }}
-                {% for e in form.permiso.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+    <!-- Añadir Permiso -->
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Añadir permiso temporal</h5>
             </div>
+            <div class="card-body">
+                <p class="text-secondary small">
+                    El motivo queda registrado para auditoría.
+                    El permiso puede revocarse en cualquier momento.
+                </p>
 
-            <div class="form-group">
-                {{ form.motivo.label }}
-                {{ form.motivo(placeholder='Ej: Baja temporal del secretario, dar de alta socios en enero') }}
-                {% for e in form.permiso.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
-            </div>
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
 
-            <div class="form-actions">
-                {{ form.submit(class='btn btn-primary') }}
+                    <div class="mb-3">
+                        {{ form.permiso.label(class='form-label') }}
+                        {{ form.permiso(class='form-select') }}
+                        {% for e in form.permiso.errors %}
+                            <div class="invalid-feedback d-block">{{ e }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.motivo.label(class='form-label') }}
+                        {{ form.motivo(class='form-control', placeholder='Ej: Baja temporal del secretario, dar de alta socios en enero') }}
+                        {% for e in form.permiso.errors %}
+                            <div class="invalid-feedback d-block">{{ e }}</div>
+                        {% endfor %}
+                    </div>
+
+                    {{ form.submit(class='btn btn-primary') }}
+                </form>
             </div>
-        </form>
+        </div>
     </div>
-
 </div>
 
-{{*/ Resumen de permisos efectivos */}}
-<div class="card" style="margin-top: 1.5rem;">
-    <h3>Permisos efectivos (roles + individuales)</h3>
-    <p class="subtitle">Vista de todos los permisos qe tiene actualmente este usuario.</p>
-    <div class="permisos-grid">
-        {% for permiso in user.permisos | sort %}
-        <div class="permiso-item">
-            <span class="badge {% if permiso in permisos_individuales | map(attribute='permiso') | list %}badge-accent{% else %}badge-secondary{% endif %}">
+<!-- Permisos Efectivos -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0">Permisos efectivos (roles + individuales)</h5>
+    </div>
+    <div class="card-body">
+        {% if user.permisos %}
+        <div class="d-flex flex-wrap gap-2">
+            {% for permiso in user.permisos|sort %}
+            <span class="badge {% if permiso in permisos_individuales|map(attribute='permiso')|list %}bg-warning{% else %}bd-info text-dark{% endif %} p-2">
                 {{ permiso }}
             </span>
+            {% endfor %}
         </div>
-        {% endfor %}
+        {% else %}
+        <p class="text-secondary mb-0">Este usuario no tiene ningún permiso asignado.</p>
+        {% endif %}
     </div>
-    {% if not user.permisos %}
-    <p style="color: var(--color-text-muted); font-size: 0.9rem;">Este usuario no tiene ningún permiso asignado.</p>
-    {% endif %}
 </div>
 {% endblock %}
